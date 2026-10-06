@@ -1,27 +1,59 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ChatFlow, { type ChatMessage } from '../components/ChatFlow';
 import CTAButton from '../components/CTAButton';
-import { WhatsAppIcon, TelegramIcon } from '../components/icons';
+import { WhatsAppIcon } from '../components/icons';
+import { MessageSquare, Smartphone, Check } from 'lucide-react';
 
 const HERO_SCRIPT: ChatMessage[] = [
   { from: 'user', text: 'fetch my customers' },
   { from: 'agent', text: 'Found 34 customers. 12 have balances due.', meta: 'Records synced just now' },
   { from: 'user', text: 'send them a reminder' },
-  { from: 'agent', text: 'Reminders sent to 12 customers. 3 already paid.', meta: 'Receipts logged automatically' },
+  { from: 'agent', text: 'Reminders sent. 3 already paid while I typed.', meta: 'Receipts logged automatically' },
 ];
 
 const ease = [0.25, 0.1, 0.25, 1] as const;
 
+/* word-by-word blur reveal */
+function AnimatedHeadline() {
+  const words = ['Your', 'business,', 'runs', 'from', 'your', 'pocket.'];
+  const [shown, setShown] = useState(0);
+
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    words.forEach((_, i) => {
+      timers.push(setTimeout(() => setShown(i + 1), 350 + i * 110));
+    });
+    return () => timers.forEach(clearTimeout);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <h1 className="font-display text-[clamp(3rem,7.5vw,6.5rem)] font-normal leading-[0.95] tracking-tight text-paper">
+      {words.map((w, i) => (
+        <motion.span
+          key={i}
+          className={i === 4 ? 'inline-block italic' : 'inline-block'}
+          initial={{ opacity: 0, filter: 'blur(12px)', y: 26 }}
+          animate={shown > i ? { opacity: 1, filter: 'blur(0px)', y: 0 } : {}}
+          transition={{ duration: 0.65, ease }}
+        >
+          {w}&nbsp;
+        </motion.span>
+      ))}
+    </h1>
+  );
+}
+
 export default function HeroSection() {
   return (
     <header className="relative overflow-hidden">
-      {/* glow field */}
+      {/* warm glow field */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(700px 380px at 78% 18%, rgba(59,130,246,0.16), transparent 65%), radial-gradient(520px 300px at 12% 70%, rgba(37,211,102,0.07), transparent 60%)',
+            'radial-gradient(720px 400px at 22% 12%, rgba(201,151,59,0.13), transparent 62%), radial-gradient(560px 340px at 82% 78%, rgba(108,138,91,0.08), transparent 58%)',
         }}
       />
 
@@ -33,81 +65,77 @@ export default function HeroSection() {
         className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7"
       >
         <a href="#" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-launch to-launchdeep text-sm font-bold text-white font-display">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-honey font-display text-sm font-bold text-ink">
             P
           </span>
-          <span className="font-display text-lg font-semibold tracking-tight text-star">PocketSoftware</span>
+          <span className="font-display text-xl text-paper">PocketSoftware</span>
         </a>
         <div className="hidden items-center gap-8 text-sm text-fog md:flex">
-          <a href="#how" className="transition-colors hover:text-star">How it works</a>
-          <a href="#cases" className="transition-colors hover:text-star">Use cases</a>
-          <a href="#trust" className="transition-colors hover:text-star">Why us</a>
+          <a href="#how" className="transition-colors hover:text-paper">How it works</a>
+          <a href="#channels" className="transition-colors hover:text-paper">Channels</a>
+          <a href="#trust" className="transition-colors hover:text-paper">Why us</a>
         </div>
         <CTAButton className="hidden sm:inline-flex">Get started</CTAButton>
       </motion.nav>
 
       {/* hero body */}
-      <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-16 px-6 pb-24 pt-16 md:pt-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
+      <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-6 pb-24 pt-16 md:pt-20 lg:grid-cols-[1.08fr_0.92fr]">
         <div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease }}
-            className="inline-flex items-center gap-2 rounded-full border border-cardline bg-card/60 px-4 py-1.5 text-xs font-medium text-fog"
+            transition={{ duration: 0.6, delay: 0.05, ease }}
+            className="inline-flex items-center gap-2 rounded-full border border-cardline bg-card/70 px-4 py-1.5 text-xs font-medium text-sand"
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-wa opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-wa" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-wagreen opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-wagreen" />
             </span>
-            Live on WhatsApp and Telegram
+            Live on WhatsApp, Telegram and SMS
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease }}
-            className="mt-6 font-display text-[clamp(2.6rem,6vw,4.6rem)] font-bold leading-[1.02] tracking-tight"
-          >
-            <span className="glow-text">Your business,</span>
-            <br />
-            <span className="glow-text">one text away.</span>
-          </motion.h1>
+          <div className="mt-6">
+            <AnimatedHeadline />
+          </div>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease }}
+            transition={{ duration: 0.8, delay: 0.9, ease }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-fog"
           >
-            No dashboards. No logins. No training week. Text your AI agent on WhatsApp like you text a
-            colleague, and it runs your school, records and customer book in the background.
+            No dashboards. No logins. No training week. Text your AI agent the way you text a colleague,
+            and it runs your school, records and customer book in the background.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease }}
+            transition={{ duration: 0.8, delay: 1.05, ease }}
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <CTAButton>
               Start on WhatsApp
-              <WhatsAppIcon className="h-4 w-4" />
+              <WhatsAppIcon className="h-4 w-4 text-ink" />
             </CTAButton>
-            <CTAButton variant="ghost" href="#how">
-              <TelegramIcon className="h-4 w-4 text-[#229ED9]" />
-              Try on Telegram
+            <CTAButton variant="ghost" href="#channels">
+              <MessageSquare className="h-4 w-4 text-honey" />
+              See all channels
             </CTAButton>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.7 }}
-            className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-2 text-xs text-fog"
+            transition={{ duration: 1, delay: 1.25 }}
+            className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-fog"
           >
-            <span className="flex items-center gap-1.5">✓ No app to install</span>
-            <span className="flex items-center gap-1.5">✓ Works with your number</span>
-            <span className="flex items-center gap-1.5">✓ Set up in one chat</span>
+            {['No app to install', 'Works with your number', 'SMS needs no data'].map((t) => (
+              <span key={t} className="flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5 text-honey" />
+                {t}
+              </span>
+            ))}
           </motion.div>
         </div>
 
@@ -118,18 +146,26 @@ export default function HeroSection() {
           transition={{ duration: 0.9, delay: 0.4, ease }}
           className="relative mx-auto w-full max-w-[340px]"
         >
-          <div className="absolute -inset-8 rounded-[3.5rem] bg-launch/10 blur-2xl" aria-hidden="true" />
+          <div className="absolute -inset-8 rounded-[3.5rem] bg-honey/10 blur-2xl" aria-hidden="true" />
           <div className="relative rounded-[2.6rem] border border-cardline bg-ink p-2.5 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
             <div className="overflow-hidden rounded-[2rem] bg-[#0B141A]">
+              {/* status bar */}
+              <div className="flex items-center justify-between bg-[#111B21] px-5 py-1.5 text-[10px] text-sand/80">
+                <span>9:41</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="h-1 w-3 rounded-sm bg-sand/60" />
+                  <Smartphone className="h-2.5 w-2.5" />
+                </div>
+              </div>
               {/* chat header */}
               <div className="flex items-center gap-3 bg-[#1F2C34] px-4 py-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-launch to-launchdeep font-display text-sm font-bold text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-honey font-display text-sm font-bold text-ink">
                   P
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-star">Pocket Agent</div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-wa">
-                    <span className="h-1.5 w-1.5 rounded-full bg-wa" /> online
+                  <div className="text-sm font-medium text-paper">Pocket Agent</div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-wagreen">
+                    <span className="h-1.5 w-1.5 rounded-full bg-wagreen" /> online
                   </div>
                 </div>
               </div>
@@ -142,7 +178,7 @@ export default function HeroSection() {
                 <div className="flex-1 rounded-full bg-[#1F2C34] px-4 py-2.5 text-[13px] text-fog">
                   Message your agent...
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-wa text-white">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-wagreen text-white">
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                   </svg>
@@ -151,28 +187,28 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* floating result card */}
+          {/* floating cards */}
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -right-6 top-16 hidden rounded-2xl border border-cardline bg-card/90 p-4 shadow-xl backdrop-blur md:block"
+            className="absolute -right-6 top-16 hidden rounded-2xl border border-cardline bg-card/95 p-4 shadow-xl backdrop-blur md:block"
           >
             <div className="text-[11px] text-fog">This week</div>
-            <div className="font-display text-xl font-bold text-star">+$1,250</div>
-            <div className="text-[11px] text-wa">12 payments collected</div>
+            <div className="font-display text-2xl text-honeyhi">+$1,250</div>
+            <div className="text-[11px] text-moss">12 payments collected</div>
           </motion.div>
           <motion.div
             animate={{ y: [0, 9, 0] }}
             transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-            className="absolute -left-8 bottom-20 hidden rounded-2xl border border-cardline bg-card/90 p-3.5 shadow-xl backdrop-blur md:block"
+            className="absolute -left-8 bottom-20 hidden rounded-2xl border border-cardline bg-card/95 p-3.5 shadow-xl backdrop-blur md:block"
           >
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-wa/15 text-wa">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-wagreen/15 text-wagreen">
                 <WhatsAppIcon className="h-4 w-4" />
               </span>
               <div>
                 <div className="text-[11px] text-fog">Records synced</div>
-                <div className="text-sm font-semibold text-star">34 customers</div>
+                <div className="text-sm font-semibold text-paper">34 customers</div>
               </div>
             </div>
           </motion.div>

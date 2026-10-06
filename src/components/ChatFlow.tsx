@@ -9,7 +9,7 @@ export interface ChatMessage {
 
 export function TypingDots() {
   return (
-    <div className="flex items-center gap-1 rounded-2xl bg-card px-4 py-3 w-fit" aria-label="Agent typing">
+    <div className="flex w-fit items-center gap-1 rounded-2xl bg-card px-4 py-3" aria-label="Agent typing">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
@@ -26,10 +26,9 @@ interface Props {
   script: ChatMessage[];
   loop?: boolean;
   className?: string;
-  bubbleBase?: string;
 }
 
-export default function ChatFlow({ script, loop = false, className = '', bubbleBase = '' }: Props) {
+export default function ChatFlow({ script, loop = false, className = '' }: Props) {
   const [step, setStep] = useState(0);
   const [visible, setVisible] = useState<ChatMessage[]>([]);
   const [typing, setTyping] = useState(false);
@@ -71,12 +70,12 @@ export default function ChatFlow({ script, loop = false, className = '', bubbleB
             <div
               className={`relative rounded-2xl px-4 py-2.5 text-[13.5px] leading-snug ${
                 m.from === 'user'
-                  ? `${bubbleBase || 'bg-launch'} text-white rounded-br-sm`
-                  : 'bg-card text-star rounded-bl-sm border border-cardline'
+                  ? 'rounded-br-sm bg-honey text-ink'
+                  : 'rounded-bl-sm border border-cardline bg-card text-paper'
               }`}
             >
               {m.text}
-              {m.meta && <div className="mt-1 text-[11px] text-fog">{m.meta}</div>}
+              {m.meta && <div className="mt-1 text-[11px] text-sand/70">{m.meta}</div>}
             </div>
           </motion.div>
         ))}

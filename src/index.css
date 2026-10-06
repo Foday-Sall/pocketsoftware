@@ -11,43 +11,47 @@
 html,
 body,
 #root {
-  background: #0b0b10;
+  background: #111110;
 }
 
 body {
   font-family: 'DM Sans', sans-serif;
-  color: #f8fafc;
+  color: #f7f4ec;
   -webkit-font-smoothing: antialiased;
 }
 
-.glow-text {
-  background: linear-gradient(135deg, #f8fafc 30%, #93c5fd 70%, #60a5fa 100%);
+::selection {
+  background: rgba(201, 151, 59, 0.4);
+  color: #f7f4ec;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2820 #111110;
+}
+
+/* warm shimmer for serif headlines */
+.shimmer {
+  background: linear-gradient(100deg, #f7f4ec 20%, #e2b65c 40%, #d9cfaf 55%, #f7f4ec 75%);
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shimmer 7s ease-in-out infinite;
 }
 
-/* chat bubble tails */
-.tail-left::before {
-  content: '';
-  position: absolute;
-  left: -6px;
-  bottom: 8px;
-  width: 12px;
-  height: 12px;
-  background: inherit;
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-  border-radius: 2px;
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
-.tail-right::before {
-  content: '';
-  position: absolute;
-  right: -6px;
-  bottom: 8px;
-  width: 12px;
-  height: 12px;
-  background: inherit;
-  clip-path: polygon(0 0, 0 100%, 0 100%, 100% 100%);
-  border-radius: 2px;
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
 }

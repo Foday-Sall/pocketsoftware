@@ -1,26 +1,27 @@
-import FadeIn from '../components/FadeIn';
+import { Check } from 'lucide-react';
+
+const ITEMS = [
+  'Works with your existing records',
+  'No migration needed',
+  'English & French',
+  'Setup in one chat',
+  'SMS works with no data',
+  'Your data is exportable anytime',
+];
 
 export default function LogoStrip() {
-  const items = [
-    'Works with your existing records',
-    'No migration needed',
-    'English & French',
-    'Setup in one chat',
-  ];
+  const doubled = [...ITEMS, ...ITEMS];
   return (
-    <section className="border-y border-cardline/50 bg-card/20">
-      <FadeIn y={16}>
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-6 py-5 text-sm text-fog">
-          {items.map((item) => (
-            <span key={item} className="flex items-center gap-2">
-              <svg viewBox="0 0 24 24" className="h-4 w-4 text-wa" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              {item}
-            </span>
-          ))}
-        </div>
-      </FadeIn>
+    <section className="overflow-hidden border-y border-cardline bg-card/40 py-4">
+      <div className="flex w-max items-center gap-10" style={{ animation: 'ticker 30s linear infinite' }}>
+        {doubled.map((item, i) => (
+          <span key={i} className="flex items-center gap-2 whitespace-nowrap text-sm text-fog">
+            <Check className="h-4 w-4 shrink-0 text-honey" />
+            {item}
+          </span>
+        ))}
+      </div>
+      <style>{`@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
     </section>
   );
 }

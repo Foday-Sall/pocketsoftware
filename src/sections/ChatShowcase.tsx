@@ -40,7 +40,7 @@ export default function ChatShowcase() {
     <section className="mx-auto max-w-6xl px-6 py-24 md:py-32">
       <FadeIn y={28}>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="font-display text-sm uppercase tracking-[0.25em] text-honey">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">
             Real conversations
           </span>
           <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">

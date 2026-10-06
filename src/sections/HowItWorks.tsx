@@ -24,7 +24,7 @@ export default function HowItWorks() {
       <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <FadeIn y={28}>
-            <span className="font-display text-sm uppercase tracking-[0.25em] text-honey">How it works</span>
+            <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">How it works</span>
             <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
               Three messages.
               <br />

@@ -1,20 +1,22 @@
-/** @type {import('tailwindcss').Config} */
+/** @type {import('tailwind.css').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        ink: '#0B0B10',
-        card: '#13131A',
-        cardline: '#1E293B',
-        fog: '#94A3B8',
-        star: '#F8FAFC',
-        launch: '#3B82F6',
-        launchdeep: '#2563EB',
-        wa: '#25D366',
+        ink: '#111110',
+        card: '#181712',
+        cardline: '#2A2820',
+        fog: '#A8A293',
+        sand: '#D9CFAF',
+        paper: '#F7F4EC',
+        honey: '#C9973B',
+        honeyhi: '#E2B65C',
+        moss: '#6C8A5B',
+        wagreen: '#25D366',
       },
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
+        display: ['"Instrument Serif"', 'Georgia', 'serif'],
         body: ['"DM Sans"', 'sans-serif'],
       },
     },

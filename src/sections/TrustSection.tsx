@@ -1,4 +1,5 @@
 import FadeIn from '../components/FadeIn';
+import { ShieldCheck, Download, RefreshCw, WifiOff } from 'lucide-react';
 
 const QUOTES = [
   {
@@ -23,10 +24,33 @@ const QUOTES = [
   },
 ];
 
+const PILLARS = [
+  {
+    icon: <ShieldCheck className="h-5 w-5 text-honey" />,
+    title: 'Your data stays yours',
+    text: 'Everything the agent collects is encrypted and belongs to you. Export the full records any time, right in the chat.',
+  },
+  {
+    icon: <Download className="h-5 w-5 text-honey" />,
+    title: 'No lock-in',
+    text: 'Leave whenever you want. Your data comes with you, in a format you can open.',
+  },
+  {
+    icon: <RefreshCw className="h-5 w-5 text-honey" />,
+    title: 'Lost phone, nothing lost',
+    text: 'Message the agent from your replacement SIM, verify once, and everything is back in the same chat.',
+  },
+  {
+    icon: <WifiOff className="h-5 w-5 text-honey" />,
+    title: 'Built for real networks',
+    text: 'SMS works with zero data. WhatsApp queues your requests and runs them the moment you are back online.',
+  },
+];
+
 const FAQS = [
   {
     q: 'Is there really no login?',
-    a: 'Correct. Your phone number is your account. When you message the agent on WhatsApp or Telegram, it already knows it is you.',
+    a: 'Correct. Your phone number is your account. When you message the agent on WhatsApp, Telegram or SMS, it already knows it is you.',
   },
   {
     q: 'What happens to my records?',
@@ -38,25 +62,20 @@ const FAQS = [
   },
   {
     q: 'Does it work without internet on the phone?',
-    a: 'WhatsApp needs a connection to deliver messages, but the agent queues your requests and runs them the moment you are back online.',
+    a: 'Yes, on SMS. The other channels need a connection to deliver messages, but the agent queues your requests and runs them the moment you are back online.',
   },
 ];
 
 export default function TrustSection() {
   return (
     <section id="trust" className="relative py-24 md:py-32">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{ background: 'radial-gradient(640px 320px at 50% 30%, rgba(59,130,246,0.08), transparent 65%)' }}
-      />
-      <div className="relative mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         <FadeIn y={28}>
           <div className="mx-auto max-w-2xl text-center">
-            <span className="font-display text-sm font-semibold uppercase tracking-widest text-launch">
+            <span className="font-display text-sm uppercase tracking-[0.25em] text-honey">
               Why businesses trust us
             </span>
-            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-star md:text-4xl">
+            <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
               Built for people who do not have time for software
             </h2>
           </div>
@@ -71,19 +90,38 @@ export default function TrustSection() {
               { v: '24/7', l: 'the agent never closes' },
             ].map((s) => (
               <div key={s.v} className="rounded-3xl border border-cardline bg-card px-8 py-7 text-center">
-                <div className="font-display text-4xl font-bold text-star">{s.v}</div>
+                <div className="font-display text-4xl text-honeyhi">{s.v}</div>
                 <div className="mt-1 text-sm text-fog">{s.l}</div>
               </div>
             ))}
           </div>
         </FadeIn>
 
-        {/* testimonials with real photos */}
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        {/* trust pillars */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {PILLARS.map((p, i) => (
+            <FadeIn key={p.title} delay={i * 0.06}>
+              <div className="flex gap-4 rounded-2xl border border-cardline bg-card p-6">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink">
+                  {p.icon}
+                </span>
+                <div>
+                  <h3 className="font-display text-lg text-paper">{p.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-fog">{p.text}</p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+
+        {/* testimonials */}
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
           {QUOTES.map((t, i) => (
-            <FadeIn key={t.name} delay={i * 0.12}>
+            <FadeIn key={t.name} delay={i * 0.1}>
               <figure className="flex h-full flex-col rounded-3xl border border-cardline bg-card p-7">
-                <blockquote className="flex-1 text-[15px] leading-relaxed text-star/90">“{t.quote}”</blockquote>
+                <blockquote className="flex-1 font-display text-lg leading-relaxed text-paper/90">
+                  &ldquo;{t.quote}&rdquo;
+                </blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
                   <img
                     src={t.img}
@@ -92,7 +130,7 @@ export default function TrustSection() {
                     className="h-11 w-11 rounded-full border border-cardline object-cover"
                   />
                   <div>
-                    <div className="text-sm font-semibold text-star">{t.name}</div>
+                    <div className="text-sm font-semibold text-paper">{t.name}</div>
                     <div className="text-xs text-fog">{t.role}</div>
                   </div>
                 </figcaption>
@@ -105,7 +143,7 @@ export default function TrustSection() {
         <div className="mt-20 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <FadeIn>
             <div>
-              <h3 className="font-display text-2xl font-bold text-star">Fair questions</h3>
+              <h3 className="font-display text-3xl text-paper">Fair questions</h3>
               <p className="mt-3 text-sm leading-relaxed text-fog">
                 Giving a chat agent your business records is a serious step. Here is exactly what happens to
                 your data, and what you keep.
@@ -114,13 +152,13 @@ export default function TrustSection() {
           </FadeIn>
           <div className="space-y-3">
             {FAQS.map((f, i) => (
-              <FadeIn key={f.q} delay={i * 0.08}>
-                <details className="group rounded-2xl border border-cardline bg-card px-6 py-4 open:border-launch/40">
-                  <summary className="flex cursor-pointer list-none items-center justify-between font-display text-[15px] font-medium text-star">
+              <FadeIn key={f.q} delay={i * 0.06}>
+                <details className="group rounded-2xl border border-cardline bg-card px-6 py-4 open:border-honey/40">
+                  <summary className="flex cursor-pointer list-none items-center justify-between font-display text-lg text-paper">
                     {f.q}
                     <svg
                       viewBox="0 0 24 24"
-                      className="h-4 w-4 text-fog transition-transform group-open:rotate-45"
+                      className="h-4 w-4 shrink-0 text-fog transition-transform group-open:rotate-45"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"

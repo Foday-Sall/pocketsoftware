@@ -11,7 +11,7 @@ const SCHOOL_SCRIPT: ChatMessage[] = [
   { from: 'user', text: 'message their parents' },
   {
     from: 'agent',
-    text: 'Sent to both parents with pickup times. I filed the attendance too.',
+    text: 'Sent to both parents with pickup times. Filed the attendance too.',
     meta: '2 messages · receipts saved',
   },
   { from: 'user', text: 'fees reminder to all parents' },
@@ -40,11 +40,11 @@ export default function ChatShowcase() {
     <section className="mx-auto max-w-6xl px-6 py-24 md:py-32">
       <FadeIn y={28}>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="font-display text-sm font-semibold uppercase tracking-widest text-launch">
+          <span className="font-display text-sm uppercase tracking-[0.25em] text-honey">
             Real conversations
           </span>
-          <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-star md:text-4xl">
-            No interface to learn. Just words.
+          <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+            No interface to learn. <em className="italic text-honeyhi">Just words.</em>
           </h2>
         </div>
       </FadeIn>
@@ -74,14 +74,14 @@ function ChatPanel({
     <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-cardline bg-card">
       <div className="flex items-center justify-between border-b border-cardline px-6 py-4">
         <div>
-          <div className="font-display font-semibold text-star">{title}</div>
+          <div className="font-display text-lg text-paper">{title}</div>
           <div className="text-xs text-fog">{subtitle}</div>
         </div>
-        <span className="flex items-center gap-1.5 text-[11px] text-wa">
-          <span className="h-1.5 w-1.5 rounded-full bg-wa" /> live demo
+        <span className="flex items-center gap-1.5 text-[11px] text-moss">
+          <span className="h-1.5 w-1.5 rounded-full bg-moss" /> live demo
         </span>
       </div>
-      <div className="min-h-[360px] flex-1 bg-[#0B141A] px-4 py-5">
+      <div className="min-h-[360px] flex-1 bg-[#14120d] px-4 py-5">
         <ChatFlow script={script} />
       </div>
     </div>

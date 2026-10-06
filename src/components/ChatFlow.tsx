@@ -9,7 +9,7 @@ export interface ChatMessage {
 
 export function TypingDots() {
   return (
-    <div className="flex w-fit items-center gap-1 rounded-2xl bg-card px-4 py-3" aria-label="Agent typing">
+    <div className="flex w-fit items-center gap-1 rounded-2xl bg-[#F1F5FD] px-4 py-3" aria-label="Agent typing">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
@@ -70,8 +70,8 @@ export default function ChatFlow({ script, loop = false, className = '' }: Props
             <div
               className={`relative rounded-2xl px-4 py-2.5 text-[13.5px] leading-snug ${
                 m.from === 'user'
-                  ? 'rounded-br-sm bg-honey text-ink'
-                  : 'rounded-bl-sm border border-cardline bg-card text-paper'
+                  ? 'rounded-br-sm bg-honey text-white'
+                  : 'rounded-bl-sm border border-cardline bg-[#F1F5FD] text-ink'
               }`}
             >
               {m.text}

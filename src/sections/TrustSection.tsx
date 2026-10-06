@@ -75,7 +75,7 @@ export default function TrustSection() {
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">
               Why businesses trust us
             </span>
-            <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] text-paper md:text-5xl">
               Built for people who do not have time for software
             </h2>
           </div>
@@ -102,7 +102,7 @@ export default function TrustSection() {
           {PILLARS.map((p, i) => (
             <FadeIn key={p.title} delay={i * 0.06}>
               <div className="flex gap-4 rounded-2xl border border-cardline bg-card p-6">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EFF6FF]">
                   {p.icon}
                 </span>
                 <div>

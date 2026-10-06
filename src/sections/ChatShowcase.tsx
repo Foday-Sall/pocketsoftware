@@ -5,7 +5,7 @@ const SCHOOL_SCRIPT: ChatMessage[] = [
   { from: 'user', text: 'attendance for class 5A' },
   {
     from: 'agent',
-    text: 'Class 5A, 24 of 26 present. Missing: Fatou S., Omar B.',
+    text: 'Class 5A, 24 of 26 present. Missing: Fatou Sonko, Omar Bojang.',
     meta: 'Marked in register · 10:42',
   },
   { from: 'user', text: 'message their parents' },
@@ -24,13 +24,13 @@ const SCHOOL_SCRIPT: ChatMessage[] = [
 
 const SALES_SCRIPT: ChatMessage[] = [
   { from: 'user', text: 'fetch my customers' },
-  { from: 'agent', text: '34 customers. 12 owe a total of $860.', meta: 'Synced just now' },
+  { from: 'agent', text: '34 customers. 12 owe a total of D62,000.', meta: 'Synced just now' },
   { from: 'user', text: 'record sale: 2 bags rice to Awa' },
-  { from: 'agent', text: 'Done. Awa now has 3 purchases, $145 total.', meta: 'Customer book updated' },
+  { from: 'agent', text: 'Done. Awa now has 3 purchases, D10,500 total.', meta: 'Customer book updated' },
   { from: 'user', text: 'who owes me money' },
   {
     from: 'agent',
-    text: 'Top 3: Musa $120 (40 days), Fatou $85 (22 days), Omar $60 (15 days).',
+    text: 'Top 3: Musa D8,500 (40 days), Fatou D6,000 (22 days), Omar D4,500 (15 days).',
     meta: 'Sorted by age of debt',
   },
 ];

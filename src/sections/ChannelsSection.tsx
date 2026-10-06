@@ -21,7 +21,7 @@ const CHANNELS = [
     id: 'sms',
     name: 'Plain SMS',
     icon: <MessageSquare className="h-6 w-6 text-honey" />,
-    desc: 'No internet, no smartphone, no app. Works on any phone, even the $10 feature phone.',
+    desc: 'No internet, no smartphone, no app. Works on any phone, even the D700 feature phone.',
     tag: 'Works with zero data',
   },
 ];
@@ -72,7 +72,7 @@ export default function ChannelsSection() {
                 who owes me
               </div>
               <div className="max-w-[80%] rounded-xl rounded-bl-sm border border-cardline bg-[#F1F5FD] px-4 py-2.5 text-ink">
-                3 customers: Musa $120, Fatou $85, Omar $60. Reply 1 to send reminders.
+                3 customers: Musa D8,500, Fatou D6,000, Omar D4,500. Reply 1 to send reminders.
               </div>
               <div className="ml-auto max-w-[80%] rounded-xl rounded-br-sm bg-honey px-4 py-2.5 text-white">
                 1

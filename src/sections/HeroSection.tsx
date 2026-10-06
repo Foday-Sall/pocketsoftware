@@ -190,7 +190,7 @@ export default function HeroSection() {
             className="absolute -right-6 top-16 hidden rounded-2xl border border-cardline bg-card/95 p-4 shadow-xl backdrop-blur md:block"
           >
             <div className="text-[11px] text-fog">This week</div>
-            <div className="font-display text-2xl text-honeyhi">+$1,250</div>
+            <div className="font-display text-2xl text-honeyhi">+D90,000</div>
             <div className="text-[11px] text-moss">12 payments collected</div>
           </motion.div>
           <motion.div

@@ -5,22 +5,25 @@ const QUOTES = [
   {
     quote:
       'I used to carry a notebook for every customer who owed me. Now I type two words and it tells me everything.',
-    name: 'Musa J.',
+    name: 'Musa Jallow',
     role: 'Shop owner, Serrekunda',
-    img: 'https://randomuser.me/api/portraits/men/32.jpg',
+    initials: 'MJ',
+    color: 'bg-wagreen/15 text-wagreen',
   },
   {
     quote:
       'I send attendance and fee reminders from the staff room. Parents answer faster because it comes on WhatsApp.',
     name: 'Adama Jabbi',
-    role: 'Principal, Bakau',
-    img: 'https://randomuser.me/api/portraits/women/44.jpg',
+    role: 'School principal, Bakau',
+    initials: 'AJ',
+    color: 'bg-honey/15 text-honey',
   },
   {
     quote: 'There was nothing to learn. I just saved the number and started texting like normal.',
-    name: 'Omar D.',
+    name: 'Omar Darboe',
     role: 'Landlord, Banjul',
-    img: 'https://randomuser.me/api/portraits/men/75.jpg',
+    initials: 'OD',
+    color: 'bg-sky-400/15 text-sky-400',
   },
 ];
 
@@ -123,12 +126,11 @@ export default function TrustSection() {
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
-                  <img
-                    src={t.img}
-                    alt={t.name}
-                    loading="lazy"
-                    className="h-11 w-11 rounded-full border border-cardline object-cover"
-                  />
+                  <span
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-cardline font-display text-sm font-semibold ${t.color}`}
+                  >
+                    {t.initials}
+                  </span>
                   <div>
                     <div className="text-sm font-semibold text-paper">{t.name}</div>
                     <div className="text-xs text-fog">{t.role}</div>

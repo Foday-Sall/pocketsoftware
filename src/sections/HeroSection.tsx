@@ -71,9 +71,9 @@ export default function HeroSection() {
           <span className="font-display text-xl text-paper">PocketSoftware</span>
         </a>
         <div className="hidden items-center gap-8 text-sm text-fog md:flex">
-          <a href="#how" className="transition-colors hover:text-paper">How it works</a>
-          <a href="#channels" className="transition-colors hover:text-paper">Channels</a>
-          <a href="#trust" className="transition-colors hover:text-paper">Why us</a>
+          <a href="#how" className="nav-link transition-colors hover:text-paper">How it works</a>
+          <a href="#channels" className="nav-link transition-colors hover:text-paper">Channels</a>
+          <a href="#trust" className="nav-link transition-colors hover:text-paper">Why us</a>
         </div>
         <CTAButton className="hidden sm:inline-flex">Get started</CTAButton>
       </motion.nav>

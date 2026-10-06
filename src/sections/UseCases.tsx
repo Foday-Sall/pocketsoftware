@@ -27,7 +27,7 @@ export default function UseCases() {
     <section id="cases" className="mx-auto max-w-6xl px-6 py-12 md:py-16">
       <FadeIn y={28}>
         <div className="mx-auto max-w-2xl text-center">
-          <span className="font-display text-sm uppercase tracking-[0.25em] text-honey">Use cases</span>
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">Use cases</span>
           <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
             One agent. Every part of your operation.
           </h2>

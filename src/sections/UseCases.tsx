@@ -28,7 +28,7 @@ export default function UseCases() {
       <FadeIn y={28}>
         <div className="mx-auto max-w-2xl text-center">
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">Use cases</span>
-          <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] text-paper md:text-5xl">
             One agent. Every part of your operation.
           </h2>
         </div>
@@ -43,7 +43,7 @@ export default function UseCases() {
               <h3 className="mt-5 font-display text-3xl leading-tight text-paper">{CASES[0].title}</h3>
               <div className="mt-8 space-y-3">
                 {CASES[0].points.map((p) => (
-                  <div key={p} className="w-fit rounded-xl bg-ink px-4 py-2.5 font-mono text-sm text-sand">
+                  <div key={p} className="w-fit rounded-xl bg-[#EFF6FF] px-4 py-2.5 font-mono text-sm text-honey">
                     {p}
                   </div>
                 ))}
@@ -67,7 +67,7 @@ export default function UseCases() {
                 <h3 className="mt-4 font-display text-xl text-paper">{c.title}</h3>
                 <div className="mt-5 flex flex-wrap gap-2.5">
                   {c.points.map((p) => (
-                    <span key={p} className="rounded-lg bg-ink px-3 py-1.5 font-mono text-xs text-sand">
+                    <span key={p} className="rounded-lg bg-[#EFF6FF] px-3 py-1.5 font-mono text-xs text-honey">
                       {p}
                     </span>
                   ))}

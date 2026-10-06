@@ -28,7 +28,7 @@ function AnimatedHeadline() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <h1 className="font-display text-[clamp(3rem,7.5vw,6.5rem)] font-normal leading-[0.95] tracking-tight text-paper">
+    <h1 className="font-display text-[clamp(3rem,7.5vw,6.5rem)] font-semibold leading-[1.05] tracking-tight text-paper">
       {words.map((w, i) => (
         <motion.span
           key={i}
@@ -53,7 +53,7 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(720px 400px at 22% 12%, rgba(201,151,59,0.13), transparent 62%), radial-gradient(560px 340px at 82% 78%, rgba(108,138,91,0.08), transparent 58%)',
+            'radial-gradient(720px 400px at 22% 12%, rgba(37,99,235,0.08), transparent 62%), radial-gradient(560px 340px at 82% 78%, rgba(5,150,105,0.05), transparent 58%)',
         }}
       />
 
@@ -65,7 +65,7 @@ export default function HeroSection() {
         className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7"
       >
         <a href="#" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-honey font-display text-sm font-bold text-ink">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-honey font-display text-sm font-bold text-white">
             P
           </span>
           <span className="font-display text-xl text-paper">PocketSoftware</span>
@@ -116,7 +116,7 @@ export default function HeroSection() {
           >
             <CTAButton>
               Start on WhatsApp
-              <WhatsAppIcon className="h-4 w-4 text-ink" />
+              <WhatsAppIcon className="h-4 w-4 text-white" />
             </CTAButton>
             <CTAButton variant="ghost" href="#channels">
               <MessageSquare className="h-4 w-4 text-honey" />
@@ -147,23 +147,23 @@ export default function HeroSection() {
           className="relative mx-auto w-full max-w-[340px]"
         >
           <div className="absolute -inset-8 rounded-[3.5rem] bg-honey/10 blur-2xl" aria-hidden="true" />
-          <div className="relative rounded-[2.6rem] border border-cardline bg-ink p-2.5 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
-            <div className="overflow-hidden rounded-[2rem] bg-[#0B141A]">
+          <div className="relative rounded-[2.6rem] border border-cardline bg-ink p-2.5 shadow-[0_30px_80px_rgba(15,23,42,0.25)]">
+            <div className="overflow-hidden rounded-[2rem] bg-white">
               {/* status bar */}
-              <div className="flex items-center justify-between bg-[#111B21] px-5 py-1.5 text-[10px] text-sand/80">
+              <div className="flex items-center justify-between bg-[#F0F2F5] px-5 py-1.5 text-[10px] text-[#475569]">
                 <span>9:41</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="h-1 w-3 rounded-sm bg-sand/60" />
+                  <span className="h-1 w-3 rounded-sm bg-[#475569]/60" />
                   <Smartphone className="h-2.5 w-2.5" />
                 </div>
               </div>
               {/* chat header */}
-              <div className="flex items-center gap-3 bg-[#1F2C34] px-4 py-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-honey font-display text-sm font-bold text-ink">
+              <div className="flex items-center gap-3 border-b border-cardline bg-[#F0F2F5] px-4 py-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-honey font-display text-sm font-bold text-white">
                   P
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-paper">Pocket Agent</div>
+                  <div className="text-sm font-medium text-ink">Pocket Agent</div>
                   <div className="flex items-center gap-1.5 text-[11px] text-wagreen">
                     <span className="h-1.5 w-1.5 rounded-full bg-wagreen" /> online
                   </div>
@@ -175,7 +175,7 @@ export default function HeroSection() {
               </div>
               {/* input bar */}
               <div className="flex items-center gap-2 px-3 pb-3">
-                <div className="flex-1 rounded-full bg-[#1F2C34] px-4 py-2.5 text-[13px] text-fog">
+                <div className="flex-1 rounded-full border border-cardline bg-[#F0F2F5] px-4 py-2.5 text-[13px] text-fog">
                   Message your agent...
                 </div>
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-wagreen text-white">

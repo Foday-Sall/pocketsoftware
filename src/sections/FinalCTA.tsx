@@ -11,15 +11,15 @@ export default function FinalCTA() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
-            style={{ background: 'radial-gradient(520px 280px at 50% 0%, rgba(201,151,59,0.14), transparent 70%)' }}
+            style={{ background: 'radial-gradient(520px 280px at 50% 0%, rgba(37,99,235,0.08), transparent 70%)' }}
           />
           <div className="relative">
             <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-honey/30 bg-honey/10 px-4 py-1.5 text-xs font-medium text-honeyhi">
               <WhatsAppIcon className="h-3.5 w-3.5 text-wagreen" />
               Say "hello" and you are in
             </div>
-            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-normal leading-[1.1] tracking-tight text-paper md:text-6xl">
-              Your software should fit in your pocket, <em className="shimmer not-italic md:italic">not on your schedule.</em>
+            <h2 className="mx-auto mt-6 max-w-2xl font-display text-4xl font-semibold leading-[1.15] tracking-tight text-paper md:text-6xl">
+              Your software should fit in your pocket, <em className="accent-sweep not-italic md:italic">not on your schedule.</em>
             </h2>
             <p className="mx-auto mt-5 max-w-xl text-fog">
               Save the number, send one message on WhatsApp, Telegram or SMS, and see your business answer

@@ -43,7 +43,7 @@ export default function ChatShowcase() {
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">
             Real conversations
           </span>
-          <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+          <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] text-paper md:text-5xl">
             No interface to learn. <em className="italic text-honeyhi">Just words.</em>
           </h2>
         </div>
@@ -81,7 +81,7 @@ function ChatPanel({
           <span className="h-1.5 w-1.5 rounded-full bg-moss" /> live demo
         </span>
       </div>
-      <div className="min-h-[360px] flex-1 bg-[#14120d] px-4 py-5">
+      <div className="min-h-[360px] flex-1 bg-[#EBF1F7] px-4 py-5">
         <ChatFlow script={script} />
       </div>
     </div>

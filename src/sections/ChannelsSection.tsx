@@ -33,7 +33,7 @@ export default function ChannelsSection() {
         <div>
           <FadeIn y={28}>
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">Channels</span>
-            <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] text-paper md:text-5xl">
               Reach it where you already are.
             </h2>
             <p className="mt-5 max-w-md text-fog">
@@ -68,16 +68,16 @@ export default function ChannelsSection() {
               </span>
             </div>
             <div className="mt-6 space-y-3 font-mono text-[13px]">
-              <div className="ml-auto max-w-[80%] rounded-xl rounded-br-sm bg-honey px-4 py-2.5 text-ink">
+              <div className="ml-auto max-w-[80%] rounded-xl rounded-br-sm bg-honey px-4 py-2.5 text-white">
                 who owes me
               </div>
-              <div className="max-w-[80%] rounded-xl rounded-bl-sm border border-cardline bg-ink px-4 py-2.5 text-paper">
+              <div className="max-w-[80%] rounded-xl rounded-bl-sm border border-cardline bg-[#F1F5FD] px-4 py-2.5 text-ink">
                 3 customers: Musa $120, Fatou $85, Omar $60. Reply 1 to send reminders.
               </div>
-              <div className="ml-auto max-w-[80%] rounded-xl rounded-br-sm bg-honey px-4 py-2.5 text-ink">
+              <div className="ml-auto max-w-[80%] rounded-xl rounded-br-sm bg-honey px-4 py-2.5 text-white">
                 1
               </div>
-              <div className="max-w-[80%] rounded-xl rounded-bl-sm border border-cardline bg-ink px-4 py-2.5 text-paper">
+              <div className="max-w-[80%] rounded-xl rounded-bl-sm border border-cardline bg-[#F1F5FD] px-4 py-2.5 text-ink">
                 Reminders sent. That was 4 texts, not 4 apps.
               </div>
             </div>

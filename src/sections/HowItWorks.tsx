@@ -25,7 +25,7 @@ export default function HowItWorks() {
         <div>
           <FadeIn y={28}>
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.25em] text-honey">How it works</span>
-            <h2 className="mt-4 font-display text-4xl leading-[1.05] text-paper md:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-semibold leading-[1.1] text-paper md:text-5xl">
               Three messages.
               <br />
               You are running your business.

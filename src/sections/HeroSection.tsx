@@ -65,9 +65,7 @@ export default function HeroSection() {
         className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 pt-7"
       >
         <a href="#" className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-honey font-display text-sm font-bold text-white">
-            P
-          </span>
+          <img src="/logo-64.png" alt="PocketSoftware logo" className="h-8 w-8 rounded-lg" />
           <span className="font-display text-xl text-paper">PocketSoftware</span>
         </a>
         <div className="hidden items-center gap-8 text-sm text-fog md:flex">
@@ -159,9 +157,7 @@ export default function HeroSection() {
               </div>
               {/* chat header */}
               <div className="flex items-center gap-3 border-b border-cardline bg-[#F0F2F5] px-4 py-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-honey font-display text-sm font-bold text-white">
-                  P
-                </div>
+                <img src="/logo-64.png" alt="" className="h-9 w-9 rounded-full" />
                 <div>
                   <div className="text-sm font-medium text-ink">Pocket Agent</div>
                   <div className="flex items-center gap-1.5 text-[11px] text-wagreen">

@@ -3,7 +3,7 @@
 **Run your business from your pocket.** No dashboards. No logins. No training week.
 
 Text your AI agent on **WhatsApp**, **Telegram** or plain **SMS** and manage customers,
-records and school operations built for small businesses and schools.
+records and school operations, built for small businesses and schools.
 
 🌐 **Live site: [pocketsoftware.dev](https://pocketsoftware.dev)**
 
@@ -22,9 +22,9 @@ dashboard, you message an AI agent the same way you message a customer. It handl
 ## Tech stack
 
 - [React 18](https://react.dev) + [TypeScript](https://www.typescriptlang.org/)
-- [Vite](https://vitejs.dev) build tool
-- [Tailwind CSS](https://tailwindcss.com) styling
-- [Framer Motion](https://www.framer.com/motion/) animations
+- [Vite](https://vitejs.dev), build tool
+- [Tailwind CSS](https://tailwindcss.com), styling
+- [Framer Motion](https://www.framer.com/motion/), animations
 
 ## Local development
 

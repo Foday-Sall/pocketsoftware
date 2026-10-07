@@ -36,7 +36,7 @@ export default function Footer() {
               <Mail className="h-4 w-4 text-sky-400" />
               info@pocketsoftware.dev
             </a>
-            {/* Channels row wraps gracefully on small screens */}
+            {/* Channels row: wraps gracefully on small screens */}
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
               {channelLinks.map((c) => (
                 <a key={c.label} href={c.href} className="flex min-h-11 items-center gap-1.5 transition-colors hover:text-paper">
@@ -50,7 +50,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="h-px w-full bg-cardline" />
 
-        {/* Bottom row: legal links own row, larger tap targets, wrap on mobile */}
+        {/* Bottom row: legal links, own row, larger tap targets, wrap on mobile */}
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:justify-start">
           {legalLinks.map((l) => (
             <a key={l.label} href={l.href} className="flex min-h-11 items-center gap-1.5 transition-colors hover:text-paper">

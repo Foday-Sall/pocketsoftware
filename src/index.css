@@ -30,7 +30,7 @@ html {
   scrollbar-color: #e4ecfc #ffffff;
 }
 
-/* accent sweep for headlines deep blue to light blue */
+/* accent sweep for headlines: deep blue to light blue */
 .accent-sweep {
   background: linear-gradient(100deg, #0f172a 20%, #2563eb 45%, #3b82f6 60%, #0f172a 80%);
   background-size: 220% 100%;

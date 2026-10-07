@@ -7,7 +7,7 @@ const CHANNELS = [
     id: 'whatsapp',
     name: 'WhatsApp',
     icon: <WhatsAppIcon className="h-6 w-6 text-wagreen" />,
-    desc: 'The main channel. Voice notes work too send a voice note, get a voice note back.',
+    desc: 'The main channel. Voice notes work too. Send a voice note, get a voice note back.',
     tag: 'Voice notes supported',
   },
   {
@@ -37,7 +37,7 @@ export default function ChannelsSection() {
               Reach it where you already are.
             </h2>
             <p className="mt-5 max-w-md text-fog">
-              One agent, three ways in. Pick the one that fits your day or your phone.
+              One agent, three ways in. Pick the one that fits your day, or your phone.
             </p>
           </FadeIn>
           <div className="mt-10">

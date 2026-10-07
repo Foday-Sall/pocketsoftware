@@ -16,7 +16,7 @@ const ease = [0.25, 0.1, 0.25, 1] as const;
 
 /* word-by-word blur reveal */
 function AnimatedHeadline() {
-  const words = ['Your', 'business,', 'runs', 'from', 'your', 'pocket.'];
+  const words = ['Your', 'business', 'runs', 'from', 'your', 'pocket.'];
   const [shown, setShown] = useState(0);
 
   useEffect(() => {
@@ -86,10 +86,9 @@ export default function HeroSection() {
             className="inline-flex items-center gap-2 rounded-full border border-cardline bg-card/70 px-4 py-1.5 text-xs font-medium text-sand"
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-wagreen opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-wagreen" />
             </span>
-            Live on WhatsApp, Telegram and SMS
+            WhatsApp. Telegram. SMS.
           </motion.div>
 
           <div className="mt-6">
@@ -189,7 +188,7 @@ export default function HeroSection() {
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute -right-6 top-16 hidden rounded-2xl border border-cardline bg-card/95 p-4 shadow-xl backdrop-blur md:block"
           >
-            <div className="text-[11px] text-fog">This week</div>
+            <div className="text-[11px] text-fog">Collected this week</div>
             <div className="font-display text-2xl text-honeyhi">+D90,000</div>
             <div className="text-[11px] text-moss">12 payments collected</div>
           </motion.div>

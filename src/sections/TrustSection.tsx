@@ -88,7 +88,7 @@ export default function TrustSection() {
         <FadeIn delay={0.1}>
           <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
-              { v: '8 sec', l: 'average answer time' },
+              { v: 'Seconds', l: 'to answer, every time' },
               { v: '0 logins', l: 'your number is your account' },
               { v: '24/7', l: 'the agent never closes' },
             ].map((s) => (

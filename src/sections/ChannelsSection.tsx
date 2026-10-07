@@ -82,14 +82,14 @@ export default function ChannelsSection() {
               </div>
             </div>
             <p className="mt-6 text-xs leading-relaxed text-fog">
-              Works on GSM networks only. If your phone can make a call, it can run your business.
+              If your phone can make a call, it can run your business.
             </p>
           </div>
           {/* Telegram and WhatsApp mini-panels */}
           <div className="mt-6 grid grid-cols-2 gap-4">
             <div className="rounded-2xl border border-cardline bg-card p-5 text-center">
               <WhatsAppIcon className="mx-auto h-5 w-5 text-wagreen" />
-              <p className="mt-2 text-xs text-fog">Voice notes in, voice notes out</p>
+              <p className="mt-2 text-xs text-fog">Talk to it like a colleague, in any language</p>
             </div>
             <div className="rounded-2xl border border-cardline bg-card p-5 text-center">
               <TelegramIcon className="mx-auto h-5 w-5 text-[#229ED9]" />

@@ -36,7 +36,7 @@ npm run build    # production build to dist/
 
 ## Deployment
 
-The site is served via a Cloudflare Worker at [pocketsoftware.dev](https://pocketsoftware.dev).
+Deployed at [pocketsoftware.dev](https://pocketsoftware.dev).
 
 ## License
 

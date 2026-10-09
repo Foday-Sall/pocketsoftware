@@ -75,7 +75,7 @@ export default function ChatFlow({ script, loop = false, className = '' }: Props
               }`}
             >
               {m.text}
-              {m.meta && <div className="mt-1 text-[11px] text-sand/70">{m.meta}</div>}
+              {m.meta && <div className="mt-1 text-[11px] text-sand">{m.meta}</div>}
             </div>
           </motion.div>
         ))}

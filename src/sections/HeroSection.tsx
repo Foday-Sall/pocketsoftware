@@ -88,7 +88,7 @@ export default function HeroSection() {
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-wagreen" />
             </span>
-            WhatsApp. Telegram. SMS.
+            WhatsApp · Telegram · SMS
           </motion.div>
 
           <div className="mt-6">
@@ -186,7 +186,7 @@ export default function HeroSection() {
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -right-6 top-16 hidden rounded-2xl border border-cardline bg-card/95 p-4 shadow-xl backdrop-blur md:block"
+            className="absolute -right-6 top-8 hidden rounded-2xl border border-cardline bg-card/95 p-4 shadow-xl backdrop-blur md:block"
           >
             <div className="text-[11px] text-fog">Collected this week</div>
             <div className="font-display text-2xl text-honeyhi">+D90,000</div>
@@ -195,7 +195,7 @@ export default function HeroSection() {
           <motion.div
             animate={{ y: [0, 9, 0] }}
             transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-            className="absolute -left-8 bottom-20 hidden rounded-2xl border border-cardline bg-card/95 p-3.5 shadow-xl backdrop-blur md:block"
+            className="absolute -left-8 bottom-12 hidden rounded-2xl border border-cardline bg-card/95 p-3.5 shadow-xl backdrop-blur md:block"
           >
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-wagreen/15 text-wagreen">

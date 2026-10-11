@@ -1,7 +1,9 @@
-package dev.pocketsoftware.engine;
+package dev.pocketsoftware.school;
 
-/** School registration flow state: step-by-step slot filling for one chat. */
-public final class RegistrationState implements FlowState {
+import dev.pocketsoftware.engine.FlowState;
+
+/** Student registration flow state: step-by-step slot filling for one chat. */
+public final class RegisterForm implements FlowState {
 
     public String fullName;
     public String classId;

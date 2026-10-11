@@ -2,14 +2,14 @@ package dev.pocketsoftware.school;
 
 import dev.pocketsoftware.engine.Actions;
 import dev.pocketsoftware.engine.Decision;
-import dev.pocketsoftware.engine.StudentStore;
+
 
 /** Answers classified school commands: list, find, fees. */
 final class SchoolQueries {
 
-    private final StudentStore students;
+    private final Student students;
 
-    SchoolQueries(StudentStore students) {
+    SchoolQueries(Student students) {
         this.students = students;
     }
 

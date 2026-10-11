@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import dev.pocketsoftware.engine.Appwrite;
 import dev.pocketsoftware.engine.Router;
-import dev.pocketsoftware.hospital.HospitalModule;
+import dev.pocketsoftware.hospital.Hospital;
 import dev.pocketsoftware.modules.Modules;
-import dev.pocketsoftware.school.SchoolModule;
+import dev.pocketsoftware.school.School;
 import org.junit.jupiter.api.Test;
 
 /** Module registry: loads by id and routes menu digits to the right module. */
@@ -16,8 +16,8 @@ class ModulesTest {
 
     private static Modules build() {
         Modules modules = new Modules();
-        modules.add(new SchoolModule());
-        modules.add(new HospitalModule());
+        modules.add(new School());
+        modules.add(new Hospital());
         return modules;
     }
 

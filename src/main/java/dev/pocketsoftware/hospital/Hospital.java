@@ -5,10 +5,10 @@ import dev.pocketsoftware.engine.FlowState;
 import dev.pocketsoftware.modules.Module;
 import java.util.List;
 
-/** Hospital module: real patient registration writing to the hospital database. */
-public final class HospitalModule implements Module {
+/** Hospital module: patient registration writing to the hospital database. */
+public final class Hospital implements Module {
 
-    private PatientStore patients;
+    private Patient patients;
 
     @Override
     public String id() {
@@ -17,7 +17,7 @@ public final class HospitalModule implements Module {
 
     @Override
     public String title() {
-        return "Hospital";
+        return "Hospital 🏥";
     }
 
     @Override
@@ -27,12 +27,12 @@ public final class HospitalModule implements Module {
 
     @Override
     public void init(Appwrite db, String channel) {
-        patients = new PatientStore(db);
+        patients = new Patient(db);
     }
 
     @Override
     public FlowState beginFlow() {
-        return new PatientFlow();
+        return new Register();
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class HospitalModule implements Module {
 
     @Override
     public String handle(String chatId, String text, FlowState state, String userId) {
-        if (!(state instanceof PatientFlow flow)) {
+        if (!(state instanceof Register flow)) {
             return startMessage();
         }
         if (flow.fullName == null) {
@@ -70,20 +70,14 @@ public final class HospitalModule implements Module {
             complaint = "";
         }
         try {
-            patients().createPatient(flow.fullName, flow.phone, complaint);
+            patients.create(flow.fullName, flow.phone, complaint);
         } catch (IllegalStateException e) {
             System.err.println("PATIENT REGISTRATION FAILED for chat " + chatId + ": " + e.getMessage());
             flow.markDone();
             return "Could not reach the database right now. Please try again later.";
         }
         flow.markDone();
-        return "✅ Patient registered!\n" + flow.fullName + " is in the hospital system.";
-    }
-
-    private PatientStore patients() {
-        if (patients == null) {
-            patients = new PatientStore(null);
-        }
-        return patients;
+        return "✅ Patient registered!
+" + flow.fullName + " is in the hospital system.";
     }
 }

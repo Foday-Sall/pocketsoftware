@@ -25,7 +25,7 @@ public final class ClefProtocol {
             throw new IllegalStateException("Clef returned no answers: " + body);
         }
         JsonObject intent = answers.get("intent").asObject();
-        String choice = intent.getString("choice", "");
+        String choice = intent.getString("choice", "").trim().toUpperCase().replace(' ', '_');
         double confidence = intent.getDouble("confidence", 0.0);
         return new Answer(choice, confidence);
     }

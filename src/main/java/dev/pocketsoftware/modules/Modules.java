@@ -1,8 +1,8 @@
 package dev.pocketsoftware.modules;
 
-import dev.pocketsoftware.business.BusinessModule;
-import dev.pocketsoftware.hospital.HospitalModule;
-import dev.pocketsoftware.school.SchoolModule;
+import dev.pocketsoftware.business.Business;
+import dev.pocketsoftware.hospital.Hospital;
+import dev.pocketsoftware.school.School;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,11 +63,11 @@ public final class Modules {
         for (String raw : (csv == null || csv.isBlank() ? "school" : csv).split(",")) {
             String id = raw.trim().toLowerCase();
             if (id.equals("school")) {
-                modules.add(new SchoolModule());
+                modules.add(new School());
             } else if (id.equals("hospital")) {
-                modules.add(new HospitalModule());
+                modules.add(new Hospital());
             } else if (id.equals("business")) {
-                modules.add(new BusinessModule());
+                modules.add(new Business());
             }
         }
         return modules;

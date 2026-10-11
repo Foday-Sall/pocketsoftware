@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import com.eclipsesource.json.JsonObject;
 
-/** Creates customer rows in the business database (tablesdb/business/tables/biz_customers). */
-public final class CustomerStore {
+/** Saves customers in the Appwrite business database. */
+public final class Customer {
 
     private Appwrite db;
 
@@ -16,7 +16,7 @@ public final class CustomerStore {
     }
 
     /** Saves one customer with optional phone and debt; returns the created row. */
-    public JsonObject createCustomer(String name, String phone, double debt) {
+    public JsonObject create(String name, String phone, double debt) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("name", name);
         if (phone != null && !phone.isBlank()) {

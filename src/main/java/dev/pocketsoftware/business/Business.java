@@ -5,10 +5,10 @@ import dev.pocketsoftware.engine.FlowState;
 import dev.pocketsoftware.modules.Module;
 import java.util.List;
 
-/** Business module: real customer registration with debt, writing to the business database. */
-public final class BusinessModule implements Module {
+/** Business module: customer registration with debt, writing to the business database. */
+public final class Business implements Module {
 
-    private final CustomerStore customers = new CustomerStore();
+    private final Customer customers = new Customer();
 
     @Override
     public String id() {
@@ -32,7 +32,7 @@ public final class BusinessModule implements Module {
 
     @Override
     public FlowState beginFlow() {
-        return new CustomerFlow();
+        return new Register();
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class BusinessModule implements Module {
 
     @Override
     public String handle(String chatId, String text, FlowState state, String userId) {
-        if (!(state instanceof CustomerFlow flow)) {
+        if (!(state instanceof Register flow)) {
             return startMessage();
         }
         if (flow.name == null) {
@@ -76,14 +76,16 @@ public final class BusinessModule implements Module {
                     + "E.g. 250 or 1499.50 (send 0 if nothing).";
         }
         try {
-            customers.createCustomer(flow.name, flow.phone, debt);
+            customers.create(flow.name, flow.phone, debt);
         } catch (IllegalStateException e) {
             System.err.println("CUSTOMER REGISTRATION FAILED for chat " + chatId + ": " + e.getMessage());
             flow.markDone();
             return "Could not reach the database right now. Please try again later.";
         }
         flow.markDone();
-        return "✅ Customer added!\n" + flow.name + " is in the business system."
-                + (debt > 0 ? "\nOutstanding debt: " + debt : "");
+        return "✅ Customer added!
+" + flow.name + " is in the business system."
+                + (debt > 0 ? "
+Outstanding debt: " + debt : "");
     }
 }

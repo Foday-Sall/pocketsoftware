@@ -12,7 +12,7 @@ final class Identity {
     /** Looks up the student id bound to this chat; null when unknown or school absent. */
     static String studentId(Modules modules, String channel, String chatId) {
         try {
-            dev.pocketsoftware.school.SchoolModule school = schoolModule(modules);
+            dev.pocketsoftware.school.School school = schoolModule(modules);
             if (school == null) {
                 return null;
             }
@@ -23,8 +23,8 @@ final class Identity {
         }
     }
 
-    private static dev.pocketsoftware.school.SchoolModule schoolModule(Modules modules) {
+    private static dev.pocketsoftware.school.School schoolModule(Modules modules) {
         Object m = modules.byId("school");
-        return m instanceof dev.pocketsoftware.school.SchoolModule school ? school : null;
+        return m instanceof dev.pocketsoftware.school.School school ? school : null;
     }
 }

@@ -1,19 +1,16 @@
 package dev.pocketsoftware.school;
 
-import dev.pocketsoftware.engine.RegistrationState;
-import dev.pocketsoftware.engine.StudentStore;
-
 /** Runs the student registration conversation; mutates the flow state. */
-final class RegistrationFlow {
+final class Register {
 
-    private final StudentStore students;
+    private final Student students;
 
-    RegistrationFlow(StudentStore students) {
+    Register(Student students) {
         this.students = students;
     }
 
     /** One step of the flow; returns the reply text. */
-    String step(RegistrationState r, String chatId, String text) {
+    String step(RegisterForm r, String chatId, String text) {
         if (r.fullName == null) {
             r.fullName = text.trim();
             return "Got it. Which class is " + r.fullName + " in?";
@@ -38,11 +35,13 @@ final class RegistrationFlow {
         return "Registration cancelled. Reply menu to see what I can do.";
     }
 
-    private String finish(RegistrationState r, String chatId) {
+    private String finish(RegisterForm r, String chatId) {
         try {
             students.createStudent(r.fullName, r.classId, r.guardianPhone, r.guardianName);
             r.markDone();
-            return "✅ Student registered!\n" + r.fullName + " is in the system.\n" + menuText();
+            return "✅ Student registered!
+" + r.fullName + " is in the system.
+" + menuText();
         } catch (IllegalStateException e) {
             System.err.println("REGISTRATION FAILED for chat " + chatId + ": " + e.getMessage());
             r.markDone();
@@ -52,11 +51,18 @@ final class RegistrationFlow {
 
     /** The school menu, reused in the registration success message. */
     String menuText() {
-        return "📚 *PocketSoftware School*\n\n"
-                + "1. Add student\n"
-                + "2. List students\n"
-                + "3. Find student\n"
-                + "4. Fees info\n\n"
+        return "📚 *PocketSoftware School*
+
+"
+                + "1. Add student
+"
+                + "2. List students
+"
+                + "3. Find student
+"
+                + "4. Fees info
+
+"
                 + "Reply with a number, or type: add student, students, "
                 + "find <name>, fees, or menu.";
     }

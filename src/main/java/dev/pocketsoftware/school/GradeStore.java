@@ -4,6 +4,7 @@ import com.eclipsesource.json.JsonObject;
 import dev.pocketsoftware.engine.Appwrite;
 import dev.pocketsoftware.engine.Query;
 import dev.pocketsoftware.school.model.Grade;
+import dev.pocketsoftware.school.model.Student;
 import java.util.ArrayList;
 import java.util.List;
 

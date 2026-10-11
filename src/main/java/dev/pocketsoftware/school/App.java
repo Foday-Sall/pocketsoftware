@@ -25,7 +25,7 @@ public final class App implements Module {
     }
 
     @Override
-    public void init(Appwrite db, String channel, Config config) {
+    public void init(Appwrite db, String channel, Config config, dev.pocketsoftware.engine.MessageSender sender) {
         students = new StudentStore(db);
         grades = new GradeStore(db, students);
         classes = new ClassStore(db);
@@ -33,8 +33,7 @@ public final class App implements Module {
         courses = new CourseStore(db);
         register = new Register(students);
         classifier = ClassifierFactory.create(config);
-        reports = new Reports(students, grades,
-                (chatId, filename, pdf) -> System.out.println("[pdf] " + chatId + " <- " + filename));
+        reports = new Reports(students, grades, sender::sendPdf);
     }
 
     @Override

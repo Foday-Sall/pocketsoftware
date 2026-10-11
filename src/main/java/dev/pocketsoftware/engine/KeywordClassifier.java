@@ -45,6 +45,21 @@ public final class KeywordClassifier implements Classifier {
         if (t.startsWith("add course")) {
             return new Decision(Actions.ADD_COURSE, 0.8, null);
         }
+        if (t.contains("patient") || t.contains("register patient")) {
+            return new Decision(Actions.REGISTER_PATIENT, 0.8, null);
+        }
+        if (t.contains("visit")) {
+            return new Decision(Actions.BOOK_VISIT, 0.8, null);
+        }
+        if (t.contains("appointment")) {
+            return new Decision(Actions.BOOK_APPOINTMENT, 0.8, null);
+        }
+        if (t.contains("customer")) {
+            return new Decision(Actions.ADD_CUSTOMER, 0.8, null);
+        }
+        if (t.contains("sale") || t.contains("sell")) {
+            return new Decision(Actions.RECORD_SALE, 0.8, null);
+        }
         return new Decision(Actions.UNKNOWN, 0.2, null);
     }
 }

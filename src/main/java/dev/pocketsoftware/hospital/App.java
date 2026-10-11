@@ -26,7 +26,7 @@ public final class App implements Module {
     }
 
     @Override
-    public void init(Appwrite db, String channel, dev.pocketsoftware.Config config) {
+    public void init(Appwrite db, String channel, Config config, dev.pocketsoftware.engine.MessageSender sender) {
         patients = new Patient(db);
     }
 

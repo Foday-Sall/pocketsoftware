@@ -27,7 +27,9 @@ public final class Main {
             }
             return;
         }
-        Thread bot = new Thread(new TelegramChannel(token, router), "telegram-poll");
+        TelegramChannel telegram = new TelegramChannel(token, router);
+        router.onPush(telegram::send);
+        Thread bot = new Thread(telegram, "telegram-poll");
         bot.start();
         System.out.println("PocketSoftware started (telegram long polling).");
     }

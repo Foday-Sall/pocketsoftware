@@ -2,6 +2,7 @@ package dev.pocketsoftware.modules;
 
 import dev.pocketsoftware.engine.Appwrite;
 import dev.pocketsoftware.engine.FlowState;
+import dev.pocketsoftware.engine.MessageSender;
 import java.util.List;
 
 /** A self-contained conversation system mounted into the engine (school, hospital, business). */
@@ -16,8 +17,8 @@ public interface Module {
     /** Menu entries; entry 1 must be the module's main flow, the rest answer immediately. */
     List<String> menuEntries();
 
-    /** Wires the module to the shared database client, channel and config; called once at startup. */
-    void init(Appwrite db, String channel, dev.pocketsoftware.Config config);
+    /** Wires the module to the database, channel, config and sender; called once at startup. */
+    void init(Appwrite db, String channel, dev.pocketsoftware.Config config, MessageSender sender);
 
     /** Fresh per-chat state for this module's flow. */
     FlowState beginFlow();

@@ -13,14 +13,34 @@ public final class Router {
     private final Modules modules;
     private final AuditLog logs;
     private final String channel;
+    private java.util.function.BiConsumer<String, String> pushListener;
 
     public Router(Modules modules, Appwrite db, String channel, Config config) {
         this.modules = modules;
         this.logs = new AuditLog(db);
         this.channel = channel;
+        MessageSender sender = new MessageSender() {
+            @Override
+            public void send(String chatId, String text) {
+                Router.this.deliver(chatId, text);
+            }
+        };
         for (Module m : modules.all()) {
-            m.init(db, channel, config);
+            m.init(db, channel, config, sender);
         }
+    }
+
+    /** Pushes a message to a chat without an incoming turn (cron reminders). */
+    void deliver(String chatId, String text) {
+        logs.message(chatId, "out", channel, text, "push", 1.0);
+        if (pushListener != null) {
+            pushListener.accept(chatId, text);
+        }
+    }
+
+    /** Registers where pushed messages (cron reminders) should actually be sent. */
+    public void onPush(java.util.function.BiConsumer<String, String> listener) {
+        this.pushListener = listener;
     }
 
     /** Handles one incoming message; returns the reply text. */

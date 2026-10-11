@@ -21,6 +21,7 @@ public final class GowaRunner {
         Appwrite db = new Appwrite(config);
         Router router = new Router(Modules.load(config.get("active_modules")), db, "whatsapp", config);
         GowaChannel channel = new GowaChannel(router, sender(config), config.get("gowa.webhookSecret"));
+        router.onPush((chatId, text) -> sender(config).sendText(chatId, text));
         WebhookServer server = new WebhookServer(bindHost(config), port(config), "/gowa", channel::onWebhook);
         server.start();
         System.out.println("PocketSoftware GOWA channel started on " + bindHost(config) + ":" + port(config) + ".");

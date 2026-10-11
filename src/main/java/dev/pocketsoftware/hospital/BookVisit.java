@@ -1,12 +1,12 @@
-package dev.pocketsoftware.business;
+package dev.pocketsoftware.hospital;
 
 import dev.pocketsoftware.engine.FlowState;
 
-/** Customer registration flow state for one chat. */
-public final class Register implements FlowState {
+/** Visit-opening flow state for one chat. */
+public final class BookVisit implements FlowState {
 
-    public String name;
-    public String phone;
+    public String patientName;
+    public String complaint;
 
     private boolean done;
 

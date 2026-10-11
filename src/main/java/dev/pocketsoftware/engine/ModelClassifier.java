@@ -22,7 +22,9 @@ public final class ModelClassifier implements Classifier {
             Actions.MENU, Actions.REGISTER_STUDENT, Actions.LIST_STUDENTS,
             Actions.FIND_STUDENT, Actions.FEES_INFO, Actions.HELP, Actions.UNKNOWN,
             Actions.ADD_MARK, Actions.REPORT, Actions.ADD_CLASS,
-            Actions.ADD_TEACHER, Actions.ADD_COURSE);
+            Actions.ADD_TEACHER, Actions.ADD_COURSE,
+            Actions.REGISTER_PATIENT, Actions.BOOK_VISIT, Actions.BOOK_APPOINTMENT,
+            Actions.ADD_CUSTOMER, Actions.RECORD_SALE);
 
     private final String url;
     private final String model;

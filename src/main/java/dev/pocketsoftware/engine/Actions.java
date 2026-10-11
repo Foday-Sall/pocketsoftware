@@ -14,6 +14,11 @@ public final class Actions {
     public static final String ADD_CLASS = "ADD_CLASS";
     public static final String ADD_TEACHER = "ADD_TEACHER";
     public static final String ADD_COURSE = "ADD_COURSE";
+    public static final String REGISTER_PATIENT = "REGISTER_PATIENT";
+    public static final String BOOK_VISIT = "BOOK_VISIT";
+    public static final String BOOK_APPOINTMENT = "BOOK_APPOINTMENT";
+    public static final String ADD_CUSTOMER = "ADD_CUSTOMER";
+    public static final String RECORD_SALE = "RECORD_SALE";
 
     private Actions() {
     }

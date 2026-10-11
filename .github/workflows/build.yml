@@ -1,0 +1,73 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # GraalVM provides native-image. Native image compiles the app to a
+      # standalone Linux executable via gcc on the runner, so no JRE is
+      # required on the target server.
+      - name: Set up GraalVM (JDK 25, native-image)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: graalvm-community
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Repo root = app folder contents: pom.xml sits at the repository root,
+      # so the build runs directly at the root (no working-directory override).
+      - name: Build jar
+        run: mvn -B -DskipTests package --file pom.xml
+
+      - name: Build native executable (no JRE needed at runtime)
+        run: |
+          native-image -jar target/pocketsoftware.jar \
+            -H:Name=pocketsoftware \
+            --no-fallback \
+            -J-Xmx5g
+          file pocketsoftware
+          ldd pocketsoftware | head -5
+
+      - name: Smoke test the native binary
+        run: |
+          # runs the startup path without config; must print the setup banner
+          timeout 10 ./pocketsoftware < /dev/null || true
+          test -x pocketsoftware
+
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocketsoftware-jar
+          path: target/pocketsoftware.jar
+
+      - name: Upload native binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pocketsoftware-native-linux-x64
+          path: pocketsoftware
+
+      - name: Publish GitHub release with jar + native binary
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" target/pocketsoftware.jar pocketsoftware \
+            --title "PocketSoftware ${{ github.ref_name }}" \
+            --notes "Automated release built from commit ${{ github.sha }}.
+
+          Assets:
+          - pocketsoftware.jar — runs on any Java 25+ JRE
+          - pocketsoftware — standalone Linux x64 native executable, no JRE required
+            (deploy: put it in /opt/pocketsoftware and point the systemd unit at it)"

@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import dev.pocketsoftware.engine.Appwrite;
 import dev.pocketsoftware.engine.Router;
-import dev.pocketsoftware.hospital.Hospital;
 import dev.pocketsoftware.modules.Modules;
-import dev.pocketsoftware.school.School;
 import org.junit.jupiter.api.Test;
 
 /** Module registry: loads by id and routes menu digits to the right module. */
@@ -16,8 +14,8 @@ class ModulesTest {
 
     private static Modules build() {
         Modules modules = new Modules();
-        modules.add(new School());
-        modules.add(new Hospital());
+        modules.add(new dev.pocketsoftware.school.App());
+        modules.add(new dev.pocketsoftware.hospital.App());
         return modules;
     }
 
@@ -63,7 +61,7 @@ class ModulesTest {
 
     @Test
     void digitOpensTheRightModule() {
-        Router router = new Router(build(), fakeDb(), "test");
+        Router router = new Router(build(), fakeDb(), "test", testConfig());
         assertEquals("Let's register a new student. First, what is the student's full name?",
                 router.handle("chat1", "1"));
         assertEquals("Let's register a new patient. What is the patient's full name?",
@@ -72,10 +70,16 @@ class ModulesTest {
 
     @Test
     void flowStepsStayInTheirModule() {
-        Router router = new Router(build(), fakeDb(), "test");
+        Router router = new Router(build(), fakeDb(), "test", testConfig());
         router.handle("chat3", "5");
         assertEquals("Got it. What is the patient's phone number?",
                 router.handle("chat3", "Awa Diallo"));
+    }
+
+    /** Empty config: the school module falls back to the keyword classifier in tests. */
+    private static Config testConfig() {
+        java.util.Properties props = new java.util.Properties();
+        return new Config(props);
     }
 
     /** Appwrite stub: empty endpoint so tests never touch the network. */

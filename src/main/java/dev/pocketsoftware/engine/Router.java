@@ -1,5 +1,6 @@
 package dev.pocketsoftware.engine;
 
+import dev.pocketsoftware.Config;
 import dev.pocketsoftware.modules.Modules;
 import dev.pocketsoftware.modules.Module;
 import java.util.HashMap;
@@ -13,12 +14,12 @@ public final class Router {
     private final AuditLog logs;
     private final String channel;
 
-    public Router(Modules modules, Appwrite db, String channel) {
+    public Router(Modules modules, Appwrite db, String channel, Config config) {
         this.modules = modules;
         this.logs = new AuditLog(db);
         this.channel = channel;
         for (Module m : modules.all()) {
-            m.init(db, channel);
+            m.init(db, channel, config);
         }
     }
 

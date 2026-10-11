@@ -8,23 +8,23 @@ import dev.pocketsoftware.modules.Module;
 import java.util.List;
 
 /** School module: student registration flow plus lookups, classifier decides. */
-public final class School implements Module {
+public final class App implements Module {
 
     private Student students;
     private Classifier classifier;
     private Register register;
-    private SchoolQueries queries;
+    private Queries queries;
 
     /** Default constructor for Modules.load(); init() wires the dependencies. */
-    public School() {
+    public App() {
     }
 
     @Override
-    public void init(Appwrite db, String channel) {
+    public void init(Appwrite db, String channel, dev.pocketsoftware.Config config) {
         students = new Student(db);
-        classifier = ClassifierFactory.create();
+        classifier = ClassifierFactory.create(config);
         register = new Register(students);
-        queries = new SchoolQueries(students);
+        queries = new Queries(students);
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class School implements Module {
 
     private Classifier classifier() {
         if (classifier == null) {
-            classifier = ClassifierFactory.create();
+            throw new IllegalStateException("init() has not run");
         }
         return classifier;
     }

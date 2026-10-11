@@ -19,7 +19,7 @@ public final class GowaRunner {
         System.setProperty("appwrite.project", config.get("appwrite.project"));
         System.setProperty("appwrite.key", config.get("appwrite.key"));
         Appwrite db = new Appwrite(config);
-        Router router = new Router(Modules.load(config.get("active_modules")), db, "whatsapp");
+        Router router = new Router(Modules.load(config.get("active_modules")), db, "whatsapp", config);
         GowaChannel channel = new GowaChannel(router, sender(config), config.get("gowa.webhookSecret"));
         WebhookServer server = new WebhookServer(bindHost(config), port(config), "/gowa", channel::onWebhook);
         server.start();

@@ -39,9 +39,7 @@ final class Register {
         try {
             students.createStudent(r.fullName, r.classId, r.guardianPhone, r.guardianName);
             r.markDone();
-            return "✅ Student registered!
-" + r.fullName + " is in the system.
-" + menuText();
+            return "✅ Student registered!\n" + r.fullName + " is in the system.\n" + menuText();
         } catch (IllegalStateException e) {
             System.err.println("REGISTRATION FAILED for chat " + chatId + ": " + e.getMessage());
             r.markDone();
@@ -51,18 +49,11 @@ final class Register {
 
     /** The school menu, reused in the registration success message. */
     String menuText() {
-        return "📚 *PocketSoftware School*
-
-"
-                + "1. Add student
-"
-                + "2. List students
-"
-                + "3. Find student
-"
-                + "4. Fees info
-
-"
+        return "📚 *PocketSoftware School*\n\n"
+                + "1. Add student\n"
+                + "2. List students\n"
+                + "3. Find student\n"
+                + "4. Fees info\n\n"
                 + "Reply with a number, or type: add student, students, "
                 + "find <name>, fees, or menu.";
     }

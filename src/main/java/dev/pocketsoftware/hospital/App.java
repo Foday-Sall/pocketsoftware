@@ -6,7 +6,7 @@ import dev.pocketsoftware.modules.Module;
 import java.util.List;
 
 /** Hospital module: patient registration writing to the hospital database. */
-public final class Hospital implements Module {
+public final class App implements Module {
 
     private Patient patients;
 
@@ -26,7 +26,7 @@ public final class Hospital implements Module {
     }
 
     @Override
-    public void init(Appwrite db, String channel) {
+    public void init(Appwrite db, String channel, dev.pocketsoftware.Config config) {
         patients = new Patient(db);
     }
 
@@ -77,7 +77,6 @@ public final class Hospital implements Module {
             return "Could not reach the database right now. Please try again later.";
         }
         flow.markDone();
-        return "✅ Patient registered!
-" + flow.fullName + " is in the hospital system.";
+        return "✅ Patient registered!\n" + flow.fullName + " is in the hospital system.";
     }
 }

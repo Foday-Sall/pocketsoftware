@@ -16,8 +16,8 @@ public interface Module {
     /** Menu entries; entry 1 must be the module's main flow, the rest answer immediately. */
     List<String> menuEntries();
 
-    /** Wires the module to the shared database client and channel; called once at startup. */
-    void init(Appwrite db, String channel);
+    /** Wires the module to the shared database client, channel and config; called once at startup. */
+    void init(Appwrite db, String channel, dev.pocketsoftware.Config config);
 
     /** Fresh per-chat state for this module's flow. */
     FlowState beginFlow();

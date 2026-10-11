@@ -5,11 +5,11 @@ import dev.pocketsoftware.engine.Decision;
 
 
 /** Answers classified school commands: list, find, fees. */
-final class SchoolQueries {
+final class Queries {
 
     private final Student students;
 
-    SchoolQueries(Student students) {
+    Queries(Student students) {
         this.students = students;
     }
 

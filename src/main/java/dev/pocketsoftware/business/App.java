@@ -6,7 +6,7 @@ import dev.pocketsoftware.modules.Module;
 import java.util.List;
 
 /** Business module: customer registration with debt, writing to the business database. */
-public final class Business implements Module {
+public final class App implements Module {
 
     private final Customer customers = new Customer();
 
@@ -26,7 +26,7 @@ public final class Business implements Module {
     }
 
     @Override
-    public void init(Appwrite db, String channel) {
+    public void init(Appwrite db, String channel, dev.pocketsoftware.Config config) {
         customers.init(db);
     }
 
@@ -83,9 +83,7 @@ public final class Business implements Module {
             return "Could not reach the database right now. Please try again later.";
         }
         flow.markDone();
-        return "✅ Customer added!
-" + flow.name + " is in the business system."
-                + (debt > 0 ? "
-Outstanding debt: " + debt : "");
+        return "✅ Customer added!\n" + flow.name + " is in the business system."
+                + (debt > 0 ? "\nOutstanding debt: " + debt : "");
     }
 }

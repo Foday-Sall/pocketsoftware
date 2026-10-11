@@ -1,6 +1,7 @@
 package dev.pocketsoftware.school;
 
 import dev.pocketsoftware.engine.Appwrite;
+import dev.pocketsoftware.engine.Query;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public final class Student {
     /** Case-insensitive name search done client-side over a fullName-contains query. */
     public List<String> searchNames(String needle) {
         List<String> names = new ArrayList<>();
-        String q = "queries%5B%5D=" + Student.query("contains", "fullName", needle);
+        String q = Query.contains("fullName", needle).toParameter();
         String lower = needle.toLowerCase();
         for (JsonObject row : db.rows(db.listRows("school", "students", q))) {
             String name = row.getString("fullName", "?");
@@ -60,16 +61,8 @@ public final class Student {
     }
 
     public JsonObject identityByChannel(String channel, String channelId) {
-        String q = "queries%5B%5D=" + Student.query("equal", "channel", channel)
-                + "&queries%5B%5D=" + Student.query("equal", "channelId", channelId);
-        List<JsonObject> rows = db.rows(db.listRows("school", "identities", q));
+        Query q = Query.equal("channel", channel).and(Query.equal("channelId", channelId));
+        List<JsonObject> rows = db.rows(db.listRows("school", "identities", q.toParameter()));
         return rows.isEmpty() ? null : rows.get(0);
-    }
-
-    static String query(String method, String attribute, String value) {
-        return java.net.URLEncoder.encode(
-                "{\"method\":\"" + method + "\",\"attribute\":\"" + attribute
-                        + "\",\"values\":[\"" + value + "\"]}",
-                java.nio.charset.StandardCharsets.UTF_8);
     }
 }

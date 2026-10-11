@@ -1,5 +1,6 @@
 package dev.pocketsoftware.school;
 
+import dev.pocketsoftware.school.model.Student;
 import java.util.List;
 
 /** Sends the guardian an email summary after a mark is entered (when SMTP is on). */

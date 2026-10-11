@@ -4,7 +4,7 @@ import jakarta.mail.Message.RecipientType;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
-import org.simplejavamail.email.RecipientBuilder;
+import org.simplejavamail.recipient.RecipientBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 
 /** Sends email over SMTP using simple-java-mail; all settings come from config. */

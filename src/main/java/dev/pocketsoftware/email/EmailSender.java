@@ -6,15 +6,19 @@ import io.appwrite.ID;
 import io.appwrite.enums.MessagingProviderType;
 import io.appwrite.models.Target;
 import io.appwrite.models.User;
+import io.appwrite.models.UserList;
 import io.appwrite.services.Messaging;
 import io.appwrite.services.Users;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Sends email through Appwrite Messaging, using the official Kotlin SDK.
  * The provider (Mailgun/Sendgrid/SMTP) is configured once in the Appwrite
  * console; no mail settings live in this codebase.
+ *
+ * Note: Kotlin suspend functions return Object in JVM bytecode, so results
+ * of SDK calls are cast explicitly in this Java caller.
  */
 public final class EmailSender {
 
@@ -30,22 +34,27 @@ public final class EmailSender {
                 Messaging messaging = new Messaging(client);
 
                 // Find or create the Appwrite user for this address.
-                User<?> user = null;
-                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, cont).getUsers()) {
+                UserList<Map<String, Object>> found = (UserList<Map<String, Object>>) (Object)
+                        users.list((List<String>) null, to, (Boolean) null, cont);
+                User<Map<String, Object>> user = null;
+                for (User<Map<String, Object>> candidate : found.getUsers()) {
                     if (to.equalsIgnoreCase(candidate.getEmail())) {
                         user = candidate;
                         break;
                     }
                 }
                 if (user == null) {
-                    user = users.create(ID.Companion.unique(7), to, null,
+                    user = (User<Map<String, Object>>) (Object) users.create(
+                            ID.Companion.unique(7), to, null,
                             ID.Companion.custom("pw-" + ID.Companion.unique(7)), null,
                             (Class<Map<String, Object>>) (Class<?>) Map.class, cont);
                 }
 
                 // Ensure the user has an email target, then send to it.
+                io.appwrite.models.TargetList targets = (io.appwrite.models.TargetList) (Object)
+                        users.listTargets(user.getId(), (List<String>) null, (Boolean) null, cont);
                 String targetId = null;
-                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, cont).getTargets()) {
+                for (Target target : targets.getTargets()) {
                     if ("email".equals(target.getProviderType())
                             && to.equalsIgnoreCase(target.getIdentifier())) {
                         targetId = target.getId();
@@ -53,8 +62,9 @@ public final class EmailSender {
                     }
                 }
                 if (targetId == null) {
-                    targetId = users.createTarget(user.getId(), ID.Companion.unique(7),
-                            MessagingProviderType.EMAIL, to, null, null, cont).getId();
+                    targetId = ((Target) (Object) users.createTarget(user.getId(),
+                            ID.Companion.unique(7), MessagingProviderType.EMAIL,
+                            to, null, null, cont)).getId();
                 }
 
                 messaging.createEmail(ID.Companion.unique(7), subject, body,

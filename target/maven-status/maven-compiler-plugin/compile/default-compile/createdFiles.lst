@@ -1,0 +1,17 @@
+dev/pocketsoftware/Main.class
+dev/pocketsoftware/engine/JevClassifier.class
+dev/pocketsoftware/engine/ConversationState.class
+dev/pocketsoftware/engine/AuditLog.class
+dev/pocketsoftware/engine/Appwrite.class
+dev/pocketsoftware/engine/CloudflareClassifier.class
+dev/pocketsoftware/engine/Actions.class
+dev/pocketsoftware/engine/Classifier.class
+dev/pocketsoftware/Config.class
+dev/pocketsoftware/engine/StudentStore.class
+dev/pocketsoftware/channels/TelegramChannel.class
+dev/pocketsoftware/engine/DecisionParser.class
+dev/pocketsoftware/engine/Router.class
+dev/pocketsoftware/engine/HttpClassifier.class
+dev/pocketsoftware/engine/Decision.class
+dev/pocketsoftware/engine/KeywordClassifier.class
+dev/pocketsoftware/engine/RegistrationState.class

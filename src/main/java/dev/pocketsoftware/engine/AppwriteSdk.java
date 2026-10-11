@@ -1,14 +1,14 @@
 package dev.pocketsoftware.engine;
 
 import io.appwrite.Client;
-import kotlin.coroutines.CoroutineContext;
+import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function2;
 import kotlinx.coroutines.CoroutineScope;
 
 /**
  * Single entry point to the official Appwrite Kotlin SDK from Java.
  *
- * Holds one shared Client configured for our self-hosted server (endpoint +
+ * Holds one shared Client configured for the self-hosted server (endpoint +
  * project ID + server API key from config) and exposes run(), which executes
  * SDK suspend functions from Java via runBlocking.
  */
@@ -43,12 +43,14 @@ public final class AppwriteSdk {
 
     /**
      * Runs one SDK suspend call from Java, blocking until it completes.
+     * The lambda receives the coroutine scope; its second parameter is the
+     * Kotlin continuation (append it when calling a suspend function).
      *
-     * @param block receives the CoroutineScope the SDK suspend functions need;
-     *              e.g. {@code Appwrite.run(scope -> new TablesDB(scope).listRows(...))}
+     * @param block suspend lambda, e.g.
+     *        {@code AppwriteSdk.run((scope, cont) ->
+     *            new TablesDB(AppwriteSdk.client()).listRows("school", "students", null, cont))}
      */
-    public static <T> T run(Function2<? super CoroutineScope, ? super CoroutineContext, ? extends T> block) {
-        // kotlinx.coroutines runBlocking(Function2, CoroutineContext) — the Java signature.
-        return kotlinx.coroutines.BuildersKt.runBlocking(block, null);
+    public static <T> T run(Function2<? super CoroutineScope, ? super Continuation<? super T>, Object> block) {
+        return (T) kotlinx.coroutines.BuildersKt.runBlocking(null, block);
     }
 }

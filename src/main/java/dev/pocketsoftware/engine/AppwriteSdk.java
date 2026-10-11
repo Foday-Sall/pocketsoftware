@@ -50,7 +50,7 @@ public final class AppwriteSdk {
      *        {@code AppwriteSdk.run((scope, cont) ->
      *            new TablesDB(AppwriteSdk.client()).listRows("school", "students", null, cont))}
      */
-    public static <T> T run(Function2<? super CoroutineScope, ? super Continuation<? super T>, Object> block) {
+    public static <T> T run(Function2<? super CoroutineScope, ? super Continuation<Object>, Object> block) {
         return (T) kotlinx.coroutines.BuildersKt.runBlocking(null, block);
     }
 }

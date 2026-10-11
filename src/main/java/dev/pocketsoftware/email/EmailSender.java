@@ -31,21 +31,21 @@ public final class EmailSender {
 
                 // Find or create the Appwrite user for this address.
                 User<?> user = null;
-                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, cont).getUsers()) {
+                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, (kotlin.coroutines.Continuation) cont).getUsers()) {
                     if (to.equalsIgnoreCase(candidate.getEmail())) {
                         user = candidate;
                         break;
                     }
                 }
                 if (user == null) {
-                    user = users.create(ID.Companion.unique(), to, null,
-                            ID.Companion.custom("pw-" + ID.Companion.unique()), null,
+                    user = users.create(ID.Companion.unique(7), to, null,
+                            ID.Companion.custom("pw-" + ID.Companion.unique(7)), null,
                             (Class<Map<String, Object>>) (Class<?>) Map.class, cont);
                 }
 
                 // Ensure the user has an email target, then send to it.
                 String targetId = null;
-                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, cont).getTargets()) {
+                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, (kotlin.coroutines.Continuation) cont).getTargets()) {
                     if ("email".equals(target.getProviderType())
                             && to.equalsIgnoreCase(target.getIdentifier())) {
                         targetId = target.getId();
@@ -53,14 +53,14 @@ public final class EmailSender {
                     }
                 }
                 if (targetId == null) {
-                    targetId = users.createTarget(user.getId(), ID.Companion.unique(),
-                            MessagingProviderType.EMAIL, to, null, null, cont).getId();
+                    targetId = users.createTarget(user.getId(), ID.Companion.unique(7),
+                            MessagingProviderType.EMAIL, to, null, null, (kotlin.coroutines.Continuation) cont).getId();
                 }
 
-                messaging.createEmail(ID.Companion.unique(), subject, body,
+                messaging.createEmail(ID.Companion.unique(7), subject, body,
                         (List<String>) null, (List<String>) null, List.of(targetId),
                         (List<String>) null, (List<String>) null, (List<String>) null,
-                        (Boolean) null, (Boolean) null, (String) null, cont);
+                        (Boolean) null, (Boolean) null, (String) null, (kotlin.coroutines.Continuation) cont);
                 return null;
             });
         } catch (Exception e) {

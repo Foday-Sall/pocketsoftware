@@ -18,6 +18,11 @@ public final class Main {
         if (config.isPlaceholder("telegram.token")) {
             System.out.println("telegram.token is not configured — waiting for valid telegram token. "
                     + "Set telegram.token in config.properties and restart.");
+            try {
+                Thread.currentThread().join(); // park: systemd sees a healthy idle service, no crash loop
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             return;
         }
         Thread bot = new Thread(new TelegramChannel(token, router), "telegram-poll");

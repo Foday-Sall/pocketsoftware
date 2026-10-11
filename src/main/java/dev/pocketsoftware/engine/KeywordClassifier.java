@@ -6,7 +6,16 @@ public final class KeywordClassifier implements Classifier {
     @Override
     public Decision classify(String text) {
         String t = text == null ? "" : text.trim().toLowerCase();
-        if (t.equals("menu") || t.equals("help") || t.equals("start")) {
+        // Normalize Telegram commands: "/start@BotName" -> "start"
+        if (t.startsWith("/")) {
+            t = t.substring(1);
+        }
+        int at = t.indexOf('@');
+        if (at > 0) {
+            t = t.substring(0, at);
+        }
+        if (t.equals("menu") || t.equals("help") || t.equals("start")
+                || t.equals("hi") || t.equals("hello") || t.equals("hey")) {
             return new Decision(Actions.MENU, 0.9, null);
         }
         if (t.contains("add student") || t.contains("register new student") || t.equals("register")) {

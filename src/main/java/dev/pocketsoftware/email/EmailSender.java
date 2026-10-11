@@ -31,7 +31,7 @@ public final class EmailSender {
 
                 // Find or create the Appwrite user for this address.
                 User<?> user = null;
-                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, (kotlin.coroutines.Continuation) cont).getUsers()) {
+                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, cont).getUsers()) {
                     if (to.equalsIgnoreCase(candidate.getEmail())) {
                         user = candidate;
                         break;
@@ -45,7 +45,7 @@ public final class EmailSender {
 
                 // Ensure the user has an email target, then send to it.
                 String targetId = null;
-                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, (kotlin.coroutines.Continuation) cont).getTargets()) {
+                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, cont).getTargets()) {
                     if ("email".equals(target.getProviderType())
                             && to.equalsIgnoreCase(target.getIdentifier())) {
                         targetId = target.getId();
@@ -54,13 +54,13 @@ public final class EmailSender {
                 }
                 if (targetId == null) {
                     targetId = users.createTarget(user.getId(), ID.Companion.unique(7),
-                            MessagingProviderType.EMAIL, to, null, null, (kotlin.coroutines.Continuation) cont).getId();
+                            MessagingProviderType.EMAIL, to, null, null, cont).getId();
                 }
 
                 messaging.createEmail(ID.Companion.unique(7), subject, body,
                         (List<String>) null, (List<String>) null, List.of(targetId),
                         (List<String>) null, (List<String>) null, (List<String>) null,
-                        (Boolean) null, (Boolean) null, (String) null, (kotlin.coroutines.Continuation) cont);
+                        (Boolean) null, (Boolean) null, (String) null, cont);
                 return null;
             });
         } catch (Exception e) {

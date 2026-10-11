@@ -35,7 +35,7 @@ public final class PatientStore {
     /** Case-insensitive name search. */
     public List<Patient> search(String name) {
         List<Patient> out = new ArrayList<>();
-        String q = Query.contains("fullName", name).toParameter();
+        Query q = Query.contains("fullName", name);
         String lower = name == null ? "" : name.toLowerCase();
         for (var row : db.rows(db.listRows("hospital", "patients", q.toParameter()))) {
             Patient p = Patient.from(row);

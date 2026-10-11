@@ -35,7 +35,7 @@ public final class CustomerStore {
     /** Case-insensitive name search. */
     public List<Customer> search(String name) {
         List<Customer> out = new ArrayList<>();
-        String q = Query.contains("name", name).toParameter();
+        Query q = Query.contains("name", name);
         String lower = name == null ? "" : name.toLowerCase();
         for (var row : db.rows(db.listRows("business", "biz_customers", q.toParameter()))) {
             Customer c = Customer.from(row);

@@ -48,16 +48,26 @@ public final class Appwrite {
         }
     }
 
-    public JsonObject getRow(String table, String id) {
-        return request("GET", "/tablesdb/school/tables/" + table + "/rows/" + id, null);
-    }
-
-    public JsonObject createRow(String table, Map<String, Object> data) {
+    /** Creates a row in the given database and table ('school' is the main database). */
+    public JsonObject createRow(String database, String table, Map<String, Object> data) {
         JsonObject body = Json.object();
         // Appwrite 2.4 TablesDB: rowId is required; row fields go under "data".
         body.set("rowId", "row_" + java.util.UUID.randomUUID().toString().replace("-", ""));
         body.set("data", toPayload(data));
-        return request("POST", "/tablesdb/school/tables/" + table + "/rows", body);
+        return request("POST", "/tablesdb/" + database + "/tables/" + table + "/rows", body);
+    }
+
+    public JsonObject createRow(String table, Map<String, Object> data) {
+        return createRow("school", table, data);
+    }
+
+    public JsonObject listRows(String database, String table, String query) {
+        String suffix = query == null || query.isBlank() ? "" : "?" + query;
+        return request("GET", "/tablesdb/" + database + "/tables/" + table + "/rows" + suffix, null);
+    }
+
+    public JsonObject listRows(String table, String query) {
+        return listRows("school", table, query);
     }
 
     /** Preserves value types: numbers stay numbers, booleans stay booleans. */
@@ -67,12 +77,8 @@ public final class Appwrite {
             Object v = e.getValue();
             if (v instanceof Double) {
                 payload.set(e.getKey(), (Double) v);
-            } else if (v instanceof Float) {
-                payload.set(e.getKey(), (Float) v);
             } else if (v instanceof Integer) {
                 payload.set(e.getKey(), (Integer) v);
-            } else if (v instanceof Long) {
-                payload.set(e.getKey(), (Long) v);
             } else if (v instanceof Boolean) {
                 payload.set(e.getKey(), (Boolean) v);
             } else {
@@ -80,25 +86,6 @@ public final class Appwrite {
             }
         }
         return payload;
-    }
-
-    public JsonObject listRows(String table, String query) {
-        String suffix = query == null || query.isBlank() ? "" : "?" + query;
-        return request("GET", "/tablesdb/school/tables/" + table + "/rows" + suffix, null);
-    }
-
-    public JsonObject updateRow(String table, String id, Map<String, Object> data) {
-        JsonObject body = Json.object();
-        JsonObject payload = Json.object();
-        for (Map.Entry<String, Object> e : data.entrySet()) {
-            payload.set(e.getKey(), String.valueOf(e.getValue()));
-        }
-        body.set("data", payload);
-        return request("PATCH", "/tablesdb/school/tables/" + table + "/rows/" + id, body);
-    }
-
-    public void deleteRow(String table, String id) {
-        request("DELETE", "/tablesdb/school/tables/" + table + "/rows/" + id, null);
     }
 
     public List<JsonObject> rows(JsonObject listResponse) {

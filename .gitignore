@@ -1,2 +1,9 @@
 target/
-*.class
+config.properties
+*.log
+.idea/
+*.iml
+/pocketsoftware
+_files.json
+_github_batch.json
+dependency-reduced-pom.xml

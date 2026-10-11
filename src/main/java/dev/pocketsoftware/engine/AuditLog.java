@@ -1,19 +1,16 @@
 package dev.pocketsoftware.engine;
 
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonObject;
-
 /** Writes audit_log and message_log entries. */
-final class AuditLog {
+public final class AuditLog {
 
     private final Appwrite db;
 
-    AuditLog(Appwrite db) {
+    public AuditLog(Appwrite db) {
         this.db = db;
     }
 
-    void message(String phone, String direction, String channel, String text,
-                 String intent, double confidence) {
+    public void message(String phone, String direction, String channel, String text,
+                        String intent, double confidence) {
         try {
             db.createRow("message_log", java.util.Map.of(
                     "phone", phone,
@@ -27,7 +24,7 @@ final class AuditLog {
         }
     }
 
-    void audit(String actor, String action, String details) {
+    public void audit(String actor, String action, String details) {
         try {
             db.createRow("audit_log", java.util.Map.of(
                     "actor", actor,

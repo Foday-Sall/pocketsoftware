@@ -10,7 +10,8 @@ public final class Config {
 
     private final Properties props = new Properties();
 
-    private Config(Properties props) {
+    /* Package-private so tests in this package can build a stub config. */
+    Config(Properties props) {
         this.props.putAll(props);
     }
 

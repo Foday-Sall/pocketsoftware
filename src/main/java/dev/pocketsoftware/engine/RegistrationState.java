@@ -1,16 +1,21 @@
 package dev.pocketsoftware.engine;
 
-/** Registration flow: step-by-step slot filling for one chat. */
-final class RegistrationState {
-    final String channel;
-    final String chatId;
-    String fullName;
-    String classId;
-    String guardianPhone;
-    String guardianName;
+/** School registration flow state: step-by-step slot filling for one chat. */
+public final class RegistrationState implements FlowState {
 
-    RegistrationState(String channel, String chatId) {
-        this.channel = channel;
-        this.chatId = chatId;
+    public String fullName;
+    public String classId;
+    public String guardianPhone;
+    public String guardianName;
+
+    private boolean done;
+
+    @Override
+    public boolean isDone() {
+        return done;
+    }
+
+    public void markDone() {
+        done = true;
     }
 }

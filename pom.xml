@@ -72,4 +72,37 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Native image: mvn -Pnative package (requires GRAALVM_HOME) -->
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>0.10.4</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals><goal>compile-no-fork</goal></goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <mainClass>dev.pocketsoftware.Main</mainClass>
+                                    <imageName>pocketsoftware</imageName>
+                                    <buildArgs>
+                                        <buildArg>-J-Xmx2g</buildArg>
+                                        <buildArg>--no-fallback</buildArg>
+                                        <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+                                    </buildArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

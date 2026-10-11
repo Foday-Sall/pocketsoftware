@@ -1,0 +1,18 @@
+services:
+  pocketsoftware-engine:
+    image: pocketsoftware-engine:latest
+    container_name: pocketsoftware-engine
+    restart: unless-stopped
+    networks: [appwrite]
+    ports:
+      # GOWA webhook endpoint, reachable only from the host itself.
+      - "127.0.0.1:8085:8085"
+    volumes:
+      - ./config.properties:/config/config.properties:ro
+    environment:
+      POCKETSOFTWARE_CONFIG: /config/config.properties
+
+networks:
+  appwrite:
+    # Created by the Appwrite docker-compose stack; join it, never recreate it.
+    external: true

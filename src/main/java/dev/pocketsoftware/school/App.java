@@ -35,10 +35,7 @@ public final class App implements Module {
         register = new Register(students);
         classifier = ClassifierFactory.create(config);
         reports = new Reports(students, grades, sender::sendPdf);
-        dev.pocketsoftware.email.EmailSender email = new dev.pocketsoftware.email.EmailSender(
-                config.get("email.host"), intOr(config.get("email.port"), 587),
-                config.get("email.user"), config.get("email.password"), config.get("email.from"));
-        notifier = new MarkNotifier(students, email);
+        notifier = new MarkNotifier(students, new dev.pocketsoftware.email.EmailSender());
     }
 
     @Override
@@ -159,11 +156,4 @@ public final class App implements Module {
         return students;
     }
 
-    private static int intOr(String value, int fallback) {
-        try {
-            return value == null ? fallback : Integer.parseInt(value.trim());
-        } catch (NumberFormatException e) {
-            return fallback;
-        }
-    }
 }

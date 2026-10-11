@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import dev.pocketsoftware.Config;
 
@@ -61,6 +62,13 @@ public final class Appwrite {
         return createRow("school", table, data);
     }
 
+    /** Updates a row in the given database and table. */
+    public JsonObject updateRow(String database, String table, String rowId, Map<String, Object> data) {
+        JsonObject body = Json.object();
+        body.set("data", toPayload(data));
+        return request("PATCH", "/tablesdb/" + database + "/tables/" + table + "/rows/" + rowId, body);
+    }
+
     public JsonObject listRows(String database, String table, String query) {
         String suffix = query == null || query.isBlank() ? "" : "?" + query;
         return request("GET", "/tablesdb/" + database + "/tables/" + table + "/rows" + suffix, null);
@@ -68,6 +76,62 @@ public final class Appwrite {
 
     public JsonObject listRows(String table, String query) {
         return listRows("school", table, query);
+    }
+
+    /** Creates an Appwrite user for an email address; returns existing user on 409. */
+    public JsonObject createUser(String email, String name) {
+        try {
+            JsonObject body = Json.object();
+            String userId = "user_" + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            body.set("userId", userId);
+            body.set("email", email);
+            if (name != null) {
+                body.set("name", name);
+            }
+            body.set("password", java.util.UUID.randomUUID().toString());
+            return request("POST", "/users", body);
+        } catch (IllegalStateException e) {
+            if (e.getMessage() != null && e.getMessage().contains("409")) {
+                return findUserByEmail(email);
+            }
+            throw e;
+        }
+    }
+
+    /** Finds an Appwrite user by exact email; null when absent. */
+    public JsonObject findUserByEmail(String email) {
+        JsonObject result = request("GET", "/users?q=" + java.net.URLEncoder.encode(email, java.nio.charset.StandardCharsets.UTF_8), null);
+        for (var row : rows(result)) {
+            if (email.equalsIgnoreCase(row.getString("email", ""))) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    /** Creates an email target for a user; returns the target id. */
+    public String createEmailTarget(String userId, String email) {
+        JsonObject body = Json.object();
+        String targetId = "tgt_" + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+        body.set("targetId", targetId);
+        body.set("providerType", "email");
+        body.set("identifier", email);
+        JsonObject target = request("POST", "/users/" + userId + "/targets", body);
+        return target.getString("$id", targetId);
+    }
+
+    /** Sends an email through Appwrite Messaging to the given target ids. */
+    public JsonObject sendEmail(String subject, String content, List<String> targetIds) {
+        JsonObject body = Json.object();
+        body.set("messageId", "msg_" + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 20));
+        body.set("subject", subject);
+        body.set("content", content);
+        JsonArray targets = Json.array();
+        for (String t : targetIds) {
+            targets.add(t);
+        }
+        body.set("targets", targets);
+        return request("POST", "/messaging/messages/email", body);
     }
 
     /** Preserves value types: numbers stay numbers, booleans stay booleans. */

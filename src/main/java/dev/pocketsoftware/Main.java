@@ -14,6 +14,10 @@ public final class Main {
         System.setProperty("appwrite.project", config.get("appwrite.project"));
         System.setProperty("appwrite.key", config.get("appwrite.key"));
         new Appwrite(config); // validates endpoint config is present
+        dev.pocketsoftware.engine.AppwriteSdk.init(
+                config.get("appwrite.endpoint"),
+                config.get("appwrite.project"),
+                config.get("appwrite.key")); // official SDK client (self-hosted endpoint + server key)
         Router router = new Router(Modules.load(config.get("active_modules")),
                 new Appwrite(config), "telegram", config);
         String token = config.get("telegram.token");

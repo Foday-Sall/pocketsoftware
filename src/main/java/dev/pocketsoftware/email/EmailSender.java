@@ -8,6 +8,7 @@ import io.appwrite.models.Target;
 import io.appwrite.models.User;
 import io.appwrite.services.Messaging;
 import io.appwrite.services.Users;
+import java.util.Map;
 import java.util.List;
 
 /**
@@ -30,19 +31,21 @@ public final class EmailSender {
 
                 // Find or create the Appwrite user for this address.
                 User<?> user = null;
-                for (User<?> candidate : users.list(null, to, null, cont).getUsers()) {
+                for (User<?> candidate : users.list((List<String>) null, to, (Boolean) null, cont).getUsers()) {
                     if (to.equalsIgnoreCase(candidate.getEmail())) {
                         user = candidate;
                         break;
                     }
                 }
                 if (user == null) {
-                    user = users.create(ID.unique(), to, null, ID.unique() + "-pw", null, cont);
+                    user = users.create(ID.Companion.unique(), to, null,
+                            ID.Companion.custom("pw-" + ID.Companion.unique()), null,
+                            (Class<Map<String, Object>>) (Class<?>) Map.class, cont);
                 }
 
                 // Ensure the user has an email target, then send to it.
                 String targetId = null;
-                for (Target target : users.listTargets(user.getId(), null, cont).getTargets()) {
+                for (Target target : users.listTargets(user.getId(), (List<String>) null, (Boolean) null, cont).getTargets()) {
                     if ("email".equals(target.getProviderType())
                             && to.equalsIgnoreCase(target.getIdentifier())) {
                         targetId = target.getId();
@@ -50,12 +53,14 @@ public final class EmailSender {
                     }
                 }
                 if (targetId == null) {
-                    targetId = users.createTarget(user.getId(), ID.unique(),
+                    targetId = users.createTarget(user.getId(), ID.Companion.unique(),
                             MessagingProviderType.EMAIL, to, null, null, cont).getId();
                 }
 
-                messaging.createEmail(ID.unique(), subject, body,
-                        null, null, List.of(targetId), null, null, null, null, null, null, cont);
+                messaging.createEmail(ID.Companion.unique(), subject, body,
+                        (List<String>) null, (List<String>) null, List.of(targetId),
+                        (List<String>) null, (List<String>) null, (List<String>) null,
+                        (Boolean) null, (Boolean) null, (String) null, cont);
                 return null;
             });
         } catch (Exception e) {

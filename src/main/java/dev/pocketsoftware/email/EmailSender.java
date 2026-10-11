@@ -4,6 +4,7 @@ import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
+import static org.simplejavamail.api.email.Recipient.TO;
 
 /** Sends email over SMTP using simple-java-mail; all settings come from config. */
 public final class EmailSender {
@@ -39,7 +40,7 @@ public final class EmailSender {
                 .buildMailer()) {
             mailer.sendMail(EmailBuilder.startingBlank()
                     .from(from)
-                    .to(to)
+                    .withRecipients(new org.simplejavamail.api.email.Recipient(null, to, TO))
                     .withSubject(subject)
                     .withPlainText(body)
                     .buildEmail());

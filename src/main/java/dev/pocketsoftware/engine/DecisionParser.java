@@ -10,16 +10,16 @@ public final class DecisionParser {
     private DecisionParser() {
     }
 
-    /** OpenRouter chat completion: content is nested under choices[0].message.content. */
-    public static Decision fromOpenRouter(String body) {
+    /** Chat-completion reply: content is nested under choices[0].message.content. */
+    public static Decision fromChatCompletion(String body) {
         JsonObject root = Json.parse(body).asObject();
         String content = root.get("choices").asArray().get(0).asObject()
                 .get("message").asObject().get("content").asString();
         return fromContent(content);
     }
 
-    /** Cloudflare AI run: result is a JSON string field on the root object. */
-    public static Decision fromCloudflare(String body) {
+    /** Simple AI run reply: result is a JSON string field on the root object. */
+    public static Decision fromResultField(String body) {
         JsonObject root = Json.parse(body).asObject();
         JsonValue result = root.get("result");
         String content = result != null && result.isString() ? result.asString() : root.toString();

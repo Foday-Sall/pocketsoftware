@@ -11,12 +11,12 @@ import java.time.Duration;
 import java.util.List;
 
 /**
- * Classifier that asks a chat-completions decision model (Jev API) to pick
+ * Classifier that asks a chat-completions decision model to pick
  * the user's intent and answers as strict JSON {choice, confidence}.
- * Works with any OpenAI-compatible endpoint (Cloudflare ai/v1, OpenRouter).
+ * Works with any standard chat-completions API endpoint.
  * Falls back to keywords when the model or network fails.
  */
-public final class JevClassifier implements Classifier {
+public final class ModelClassifier implements Classifier {
 
     private static final List<String> CHOICES = List.of(
             Actions.MENU, Actions.REGISTER_STUDENT, Actions.LIST_STUDENTS,
@@ -30,7 +30,7 @@ public final class JevClassifier implements Classifier {
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    public JevClassifier(String url, String model, String apiKey) {
+    public ModelClassifier(String url, String model, String apiKey) {
         this.url = url;
         this.model = model;
         this.apiKey = apiKey;

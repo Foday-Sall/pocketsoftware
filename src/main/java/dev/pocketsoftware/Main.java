@@ -13,8 +13,6 @@ public final class Main {
         Config config = Config.load();
         System.setProperty("appwrite.project", config.get("appwrite.project"));
         System.setProperty("appwrite.key", config.get("appwrite.key"));
-        System.setProperty("clef.account", config.get("clef.accountId"));
-        System.setProperty("clef.token", config.get("clef.token"));
         new Appwrite(config); // validates endpoint config is present
         Router router = new Router(Modules.load(config.get("active_modules")),
                 new Appwrite(config), "telegram", config);

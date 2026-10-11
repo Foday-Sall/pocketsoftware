@@ -2,40 +2,31 @@ package dev.pocketsoftware.engine;
 
 import dev.pocketsoftware.Config;
 
-/** Builds the configured classifier: jev (default), clef, or keyword. */
+/** Builds the configured classifier: model (default) or keyword fallback. */
 public final class ClassifierFactory {
 
     /** Creates the classifier named by config key 'classifier'. */
     public static Classifier create(Config config) {
         String name = config.get("classifier").trim().toLowerCase();
         return switch (name) {
-            case "", "jev" -> jev(config);
-            case "clef" -> clef(config);
+            case "", "model", "discover" -> model(config);
             case "keyword" -> new KeywordClassifier();
             default -> {
-                System.out.println("Unknown classifier '" + name + "', using jev.");
-                yield jev(config);
+                System.out.println("Unknown classifier '" + name + "', using model.");
+                yield model(config);
             }
         };
     }
 
-    private static Classifier jev(Config config) {
-        String url = config.get("jev.url");
-        String model = config.get("jev.model");
-        String key = config.get("jev.apiKey");
+    /** The model classifier: any standard chat-completions API endpoint. */
+    private static Classifier model(Config config) {
+        String url = config.get("discover.url");
+        String modelId = config.get("discover.model");
+        String key = config.get("discover.apiKey");
         if (key.isBlank()) {
             return new KeywordClassifier();
         }
-        return new JevClassifier(url, model, key);
-    }
-
-    private static Classifier clef(Config config) {
-        String token = config.get("clef.token");
-        if (token.isBlank()) {
-            return new KeywordClassifier();
-        }
-        return new ClefClassifier(config.get("clef.accountId"), token,
-                config.get("clef.model").isBlank() ? "clef-flash" : config.get("clef.model"));
+        return new ModelClassifier(url, modelId, key);
     }
 
     private ClassifierFactory() {

@@ -51,6 +51,10 @@ final class SchoolSchema {
                         col("studentId", "string", 36, true, null),
                         col("date", "string", 10, true, null),
                         col("status", "string", 16, true, null))),
+                new Schema.Table("courses", "Courses", List.of(
+                        col("name", "string", 64, true, null),
+                        col("code", "string", 16, false, null),
+                        col("teacher", "string", 128, false, null))),
                 new Schema.Table("fees", "Fees", List.of(
                         col("studentId", "string", 36, true, null),
                         col("type", "string", 16, true, null),

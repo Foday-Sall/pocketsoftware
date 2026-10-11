@@ -30,6 +30,21 @@ public final class KeywordClassifier implements Classifier {
         if (t.contains("fees") || t.contains("balance")) {
             return new Decision(Actions.FEES_INFO, 0.7, null);
         }
+        if (t.startsWith("add mark")) {
+            return new Decision(Actions.ADD_MARK, 0.8, null);
+        }
+        if (t.startsWith("report") || t.contains("send me report")) {
+            return new Decision(Actions.REPORT, 0.8, null);
+        }
+        if (t.startsWith("add class")) {
+            return new Decision(Actions.ADD_CLASS, 0.8, null);
+        }
+        if (t.startsWith("add teacher")) {
+            return new Decision(Actions.ADD_TEACHER, 0.8, null);
+        }
+        if (t.startsWith("add course")) {
+            return new Decision(Actions.ADD_COURSE, 0.8, null);
+        }
         return new Decision(Actions.UNKNOWN, 0.2, null);
     }
 }

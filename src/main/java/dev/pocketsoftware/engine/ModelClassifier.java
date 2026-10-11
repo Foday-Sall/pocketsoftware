@@ -20,7 +20,9 @@ public final class ModelClassifier implements Classifier {
 
     private static final List<String> CHOICES = List.of(
             Actions.MENU, Actions.REGISTER_STUDENT, Actions.LIST_STUDENTS,
-            Actions.FIND_STUDENT, Actions.FEES_INFO, Actions.HELP, Actions.UNKNOWN);
+            Actions.FIND_STUDENT, Actions.FEES_INFO, Actions.HELP, Actions.UNKNOWN,
+            Actions.ADD_MARK, Actions.REPORT, Actions.ADD_CLASS,
+            Actions.ADD_TEACHER, Actions.ADD_COURSE);
 
     private final String url;
     private final String model;

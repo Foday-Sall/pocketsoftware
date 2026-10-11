@@ -3,9 +3,9 @@ package dev.pocketsoftware.school;
 /** Runs the student registration conversation; mutates the flow state. */
 final class Register {
 
-    private final Student students;
+    private final StudentStore students;
 
-    Register(Student students) {
+    Register(StudentStore students) {
         this.students = students;
     }
 
@@ -37,7 +37,7 @@ final class Register {
 
     private String finish(RegisterForm r, String chatId) {
         try {
-            students.createStudent(r.fullName, r.classId, r.guardianPhone, r.guardianName);
+            students.create(r.fullName, r.guardianPhone, r.classId, r.guardianName);
             r.markDone();
             return "✅ Student registered!\n" + r.fullName + " is in the system.\n" + menuText();
         } catch (IllegalStateException e) {
@@ -53,8 +53,14 @@ final class Register {
                 + "1. Add student\n"
                 + "2. List students\n"
                 + "3. Find student\n"
-                + "4. Fees info\n\n"
-                + "Reply with a number, or type: add student, students, "
-                + "find <name>, fees, or menu.";
+                + "4. Fees info\n"
+                + "5. Add mark\n"
+                + "6. Send report\n"
+                + "7. Add class\n"
+                + "8. Add teacher\n"
+                + "9. Add course\n\n"
+                + "Reply with a number, or type: students, find <name>, fees, "
+                + "add mark <student> <subject> <term> <score>, report <name>, "
+                + "add class/teacher/course, or menu.";
     }
 }

@@ -19,6 +19,7 @@ public final class App implements Module {
     private Reports reports;
     private Classifier classifier;
     private Register register;
+    private MarkNotifier notifier;
 
     /** Default constructor for Modules.load(); init() wires the dependencies. */
     public App() {
@@ -34,6 +35,10 @@ public final class App implements Module {
         register = new Register(students);
         classifier = ClassifierFactory.create(config);
         reports = new Reports(students, grades, sender::sendPdf);
+        dev.pocketsoftware.email.EmailSender email = new dev.pocketsoftware.email.EmailSender(
+                config.get("email.host"), intOr(config.get("email.port"), 587),
+                config.get("email.user"), config.get("email.password"), config.get("email.from"));
+        notifier = new MarkNotifier(students, email);
     }
 
     @Override
@@ -100,7 +105,12 @@ public final class App implements Module {
         String t = text == null ? "" : text.trim();
         String lower = t.toLowerCase();
         if (lower.startsWith("add mark")) {
-            return Marks.handleAddMark(grades, chatId, text);
+            String reply = Marks.handleAddMark(grades, chatId, text);
+            if (reply.startsWith("✅") && notifier != null) {
+                String[] p = text.trim().split("\\s+");
+                notifier.afterMark(p[2], p[3], p[4], Integer.parseInt(p[5]));
+            }
+            return reply;
         }
         if (lower.startsWith("add class")) {
             return Admins.handleAddClass(classes, text);
@@ -147,5 +157,13 @@ public final class App implements Module {
     /** Store accessor for the router's identity lookup. */
     public StudentStore students() {
         return students;
+    }
+
+    private static int intOr(String value, int fallback) {
+        try {
+            return value == null ? fallback : Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
     }
 }

@@ -17,6 +17,7 @@ final class SchoolSchema {
                         col("fullName", "string", 128, true, null),
                         col("classId", "string", 36, false, null),
                         col("guardianName", "string", 128, false, null),
+                        col("guardianEmail", "string", 128, false, null),
                         col("admissionNo", "string", 36, false, null),
                         col("status", "string", 16, false, "active"))),
                 new Schema.Table("identities", "Identities", List.of(
@@ -40,7 +41,8 @@ final class SchoolSchema {
                 new Schema.Table("staff", "Staff", List.of(
                         col("phone", "string", 20, true, null),
                         col("name", "string", 128, true, null),
-                        col("role", "string", 16, true, null))),
+                        col("role", "string", 16, true, null),
+                        col("email", "string", 128, false, null))),
                 new Schema.Table("grades", "Grades", List.of(
                         col("studentId", "string", 36, true, null),
                         col("subject", "string", 64, true, null),

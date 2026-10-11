@@ -6,7 +6,7 @@ import java.util.Map;
 
 /** One student record; maps itself to and from the database row. */
 public record Student(String id, String fullName, String phone, String classId,
-                      String guardianName, String admissionNo, String status) {
+                      String guardianName, String guardianEmail, String admissionNo, String status) {
 
     /** Column values for saving. */
     public Map<String, Object> data() {
@@ -17,6 +17,9 @@ public record Student(String id, String fullName, String phone, String classId,
         data.put("fullName", fullName);
         data.put("classId", classId);
         data.put("guardianName", guardianName);
+        if (guardianEmail != null && !guardianEmail.isBlank()) {
+            data.put("guardianEmail", guardianEmail);
+        }
         data.put("admissionNo", admissionNo);
         data.put("status", status);
         return data;
@@ -26,7 +29,7 @@ public record Student(String id, String fullName, String phone, String classId,
     public static Student from(JsonObject row) {
         return new Student(row.getString("$id", ""), row.getString("fullName", "?"),
                 row.getString("phone", ""), row.getString("classId", ""),
-                row.getString("guardianName", ""), row.getString("admissionNo", ""),
+                row.getString("guardianName", ""), row.getString("guardianEmail", ""), row.getString("admissionNo", ""),
                 row.getString("status", "active"));
     }
 }

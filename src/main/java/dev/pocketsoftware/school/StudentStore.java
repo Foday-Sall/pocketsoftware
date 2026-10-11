@@ -21,11 +21,11 @@ public final class StudentStore {
     /** Saves one registered student (phone column = the guardian's WhatsApp number). */
     public Student create(String fullName, String guardianPhone, String classId, String guardianName) {
         Student s = new Student(null, fullName, guardianPhone, classId,
-                guardianName, "ADM-" + System.currentTimeMillis(), "active");
+                guardianName, null, "ADM-" + System.currentTimeMillis(), "active");
         Map<String, Object> data = s.data();
         String id = db.createRow("school", "students", data).getString("$id", "");
         return new Student(id, s.fullName(), s.phone(), s.classId(),
-                s.guardianName(), s.admissionNo(), s.status());
+                s.guardianName(), null, s.admissionNo(), s.status());
     }
 
     public void createIdentity(String channel, String channelId, String studentId) {

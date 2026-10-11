@@ -50,7 +50,15 @@ public final class AppwriteSdk {
      *        {@code AppwriteSdk.run((scope, cont) ->
      *            new TablesDB(AppwriteSdk.client()).listRows("school", "students", null, cont))}
      */
+    @SuppressWarnings("unchecked")
     public static <T> T run(Function2<? super CoroutineScope, ? super Continuation<Object>, Object> block) {
-        return (T) kotlinx.coroutines.BuildersKt.runBlocking(null, block);
+        try {
+            return (T) kotlinx.coroutines.BuildersKt.runBlocking(null, block);
+        } catch (InterruptedException e) {
+            // runBlocking declares throws InterruptedException at the JVM level;
+            // restore the interrupt flag and fail the call.
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while waiting for Appwrite call", e);
+        }
     }
 }

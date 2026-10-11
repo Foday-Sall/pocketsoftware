@@ -47,7 +47,10 @@ public final class Router {
         if (state.registration != null) {
             return continueRegistration(state, chatId, text);
         }
-        Decision d = classifier.classify(text);
+        if (state.studentId == null && isGreeting(text)) {
+            return intro();
+        }
+        Decision d = classifyWithMenuDigits(text);
         logs.message(chatId, "classified", channel, text, d.action(), d.confidence());
         if (d.action().equals(Actions.REGISTER_STUDENT) && state.studentId == null) {
             return startRegistration(state, chatId);
@@ -55,6 +58,37 @@ public final class Router {
         return d.confidence() < 0.5 || d.action().equals(Actions.UNKNOWN)
                 ? unknownReply()
                 : answerKnown(state, chatId, d);
+    }
+
+    private boolean isGreeting(String text) {
+        String t = text == null ? "" : text.trim().toLowerCase();
+        if (t.startsWith("/")) {
+            t = t.substring(1);
+        }
+        int at = t.indexOf('@');
+        if (at > 0) {
+            t = t.substring(0, at);
+        }
+        return t.equals("start") || t.equals("hi") || t.equals("hello") || t.equals("hey");
+    }
+
+    private String intro() {
+        return "👋 Welcome to PocketSoftware School!\n\n"
+                + "I'm your school assistant — I keep student records, "
+                + "and later fees and attendance, right here in chat. No app, no login.\n\n"
+                + menuText();
+    }
+
+    /** Menu digits map to actions directly; everything else goes to the classifier. */
+    private Decision classifyWithMenuDigits(String text) {
+        String t = text == null ? "" : text.trim();
+        switch (t) {
+            case "1": return new Decision(Actions.REGISTER_STUDENT, 1.0, null);
+            case "2": return new Decision(Actions.LIST_STUDENTS, 1.0, null);
+            case "3": return new Decision(Actions.FIND_STUDENT, 1.0, "");
+            case "4": return new Decision(Actions.FEES_INFO, 1.0, null);
+            default:  return classifier.classify(text);
+        }
     }
 
     private String startRegistration(ConversationState state, String chatId) {
@@ -96,8 +130,9 @@ public final class Router {
             state.studentId = studentId;
             students.createIdentity(channel, chatId, studentId);
             logs.audit(chatId, "register_student", studentId + " " + r.fullName);
-            return "Student registered!";
+            return "✅ Student registered!\n" + r.fullName + " is in the system.\n" + menuText();
         } catch (IllegalStateException e) {
+            System.err.println("REGISTRATION FAILED for chat " + chatId + ": " + e.getMessage());
             state.registration = null;
             return "Registration failed, please try again later.";
         }
@@ -120,8 +155,13 @@ public final class Router {
     }
 
     private String menuText() {
-        return "I can: register a student (reply 'add student'), list students ('students'), "
-                + "find one ('find <name>'), or check fees ('fees').";
+        return "📚 *PocketSoftware School*\n\n"
+                + "1. Add student\n"
+                + "2. List students\n"
+                + "3. Find student\n"
+                + "4. Fees info\n\n"
+                + "Reply with a number, or type: add student, students, "
+                + "find <name>, fees, or menu.";
     }
 
     private String listStudents() {
@@ -144,6 +184,6 @@ public final class Router {
     }
 
     private String unknownReply() {
-        return "I didn't catch that — reply menu to see what I can do.";
+        return "I didn't catch that.\n" + menuText();
     }
 }

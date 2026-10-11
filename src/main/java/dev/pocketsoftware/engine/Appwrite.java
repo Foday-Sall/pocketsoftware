@@ -54,10 +54,32 @@ public final class Appwrite {
 
     public JsonObject createRow(String table, Map<String, Object> data) {
         JsonObject body = Json.object();
-        for (Map.Entry<String, Object> e : data.entrySet()) {
-            body.set(e.getKey(), String.valueOf(e.getValue()));
-        }
+        // Appwrite 2.4 TablesDB: rowId is required; row fields go under "data".
+        body.set("rowId", "row_" + java.util.UUID.randomUUID().toString().replace("-", ""));
+        body.set("data", toPayload(data));
         return request("POST", "/tablesdb/school/tables/" + table + "/rows", body);
+    }
+
+    /** Preserves value types: numbers stay numbers, booleans stay booleans. */
+    private static JsonObject toPayload(Map<String, Object> data) {
+        JsonObject payload = Json.object();
+        for (Map.Entry<String, Object> e : data.entrySet()) {
+            Object v = e.getValue();
+            if (v instanceof Double) {
+                payload.set(e.getKey(), (Double) v);
+            } else if (v instanceof Float) {
+                payload.set(e.getKey(), (Float) v);
+            } else if (v instanceof Integer) {
+                payload.set(e.getKey(), (Integer) v);
+            } else if (v instanceof Long) {
+                payload.set(e.getKey(), (Long) v);
+            } else if (v instanceof Boolean) {
+                payload.set(e.getKey(), (Boolean) v);
+            } else {
+                payload.set(e.getKey(), String.valueOf(v));
+            }
+        }
+        return payload;
     }
 
     public JsonObject listRows(String table, String query) {
@@ -67,9 +89,11 @@ public final class Appwrite {
 
     public JsonObject updateRow(String table, String id, Map<String, Object> data) {
         JsonObject body = Json.object();
+        JsonObject payload = Json.object();
         for (Map.Entry<String, Object> e : data.entrySet()) {
-            body.set(e.getKey(), String.valueOf(e.getValue()));
+            payload.set(e.getKey(), String.valueOf(e.getValue()));
         }
+        body.set("data", payload);
         return request("PATCH", "/tablesdb/school/tables/" + table + "/rows/" + id, body);
     }
 

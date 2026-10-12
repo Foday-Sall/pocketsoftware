@@ -263,41 +263,39 @@ public class Index {
     }
 
     /** Sends an email via Appwrite Messaging (provider configured in console). */
+    @SuppressWarnings("unchecked")
     public static String sendEmail(String to, String subject, String body,
                                    RuntimeContext context) {
         try {
             Users users = new Users(client());
             UserList<Map<String, Object>> found = userList(sync(cont ->
                     users.list(List.of(Query.Companion.limit(5)), to, null, mapClass(), cont)));
-            User<Map<String, Object>> user = null;
+            User<Map<String, Object>> existing = null;
             for (User<Map<String, Object>> candidate : found.getUsers()) {
                 if (to.equalsIgnoreCase(candidate.getEmail())) {
-                    user = candidate;
+                    existing = candidate;
                     break;
                 }
             }
-            if (user == null) {
-                user = (User<Map<String, Object>>) sync(cont -> users.create(
-                        io.appwrite.ID.Companion.unique(7), to, null,
-                        io.appwrite.ID.Companion.custom("pw-" + io.appwrite.ID.Companion.unique(7)),
-                        null, mapClass(), cont));
-            }
-            String targetId = null;
+            final User<Map<String, Object>> user = existing != null ? existing
+                    : (User<Map<String, Object>>) sync(cont -> users.create(
+                            io.appwrite.ID.Companion.unique(7), to, null,
+                            io.appwrite.ID.Companion.custom("pw-" + io.appwrite.ID.Companion.unique(7)),
+                            null, mapClass(), cont));
             io.appwrite.models.TargetList targets = (io.appwrite.models.TargetList) sync(cont ->
                     users.listTargets(user.getId(), null, null, cont));
+            String foundTarget = null;
             for (Target target : targets.getTargets()) {
                 if ("email".equals(target.getProviderType())
                         && to.equalsIgnoreCase(target.getIdentifier())) {
-                    targetId = target.getId();
+                    foundTarget = target.getId();
                     break;
                 }
             }
-            if (targetId == null) {
-                Target created = (Target) sync(cont -> users.createTarget(user.getId(),
-                        io.appwrite.ID.Companion.unique(7), MessagingProviderType.EMAIL,
-                        to, null, null, cont));
-                targetId = created.getId();
-            }
+            final String targetId = foundTarget != null ? foundTarget
+                    : ((Target) sync(cont -> users.createTarget(user.getId(),
+                            io.appwrite.ID.Companion.unique(7), MessagingProviderType.EMAIL,
+                            to, null, null, cont))).getId();
             sync(cont -> new Messaging(client()).createEmail(
                     io.appwrite.ID.Companion.unique(7), subject, body,
                     null, null, List.of(targetId), null, null, null, null, null, null, cont));

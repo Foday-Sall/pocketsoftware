@@ -13,6 +13,7 @@ import io.appwrite.models.RowList;
 import io.appwrite.services.Functions;
 import io.appwrite.services.Storage;
 import io.appwrite.services.TablesDB;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -62,13 +63,17 @@ public class Index {
     private static final String ACTIONS = env("POCKET_ACTIONS_TABLE", "bot_actions");
     private static final String TEMPLATES = env("POCKET_TEMPLATES_TABLE", "bot_templates");
     private static final String SESSIONS = env("POCKET_SESSIONS_TABLE", "sessions");
-    private static final String REMINDER_RE =
-            "(?i)remind me (?:in|after) (\\d+) (minute|min|hour|hr|day)s?";
-    private static final double CONFIDENCE_FLOOR =
-            Double.parseDouble(env("POCKET_CONFIDENCE_FLOOR", "0.5"));
+    private static final Pattern REMINDER =
+            Pattern.compile("(?i)remind me (?:in|after) (\\d+) (minute|min|hour|hr|day)s?");
 
     /** Captured request headers; carries the injected ephemeral API key. */
     private static final ThreadLocal<Map<String, String>> REQ_HEADERS = new ThreadLocal<>();
+
+    /** Clef's own confidence score for the current request, set by decide(). */
+    private static final ThreadLocal<String> lastConfidence = ThreadLocal.withInitial(() -> "0.0");
+
+    /** One SDK client per request: skips a fresh OkHttp instance per DB call. */
+    private static final ThreadLocal<Client> REQ_CLIENT = new ThreadLocal<>();
 
     private static String reqHeader(String name) {
         Map<String, String> h = REQ_HEADERS.get();
@@ -87,6 +92,10 @@ public class Index {
             Map<String, Object> err = new LinkedHashMap<>();
             err.put("error", String.valueOf(e.getMessage()));
             return context.getRes().json(err, 500);
+        } finally {
+            REQ_HEADERS.remove();
+            lastConfidence.remove();
+            REQ_CLIENT.remove();
         }
     }
 
@@ -129,10 +138,10 @@ public class Index {
             return done("wizard", "1.0", reply, attachmentId);
         }
 
-        // ---- 2. DECIDE: intent token from the decision model (or keywords)
+        // ---- 2. DECIDE: intent token from Clef (confidence is Clef's own)
         List<String> choices = new ArrayList<>(actions.keySet());
         String intent = decide(text, choices, actions);
-        String confidence = confidenceOf(text, choices, intent);
+        String confidence = lastConfidence.get();
 
         // ---- reminder request: hand the countdown to the platform queue
         String scheduled = scheduleReminder(tenant, sender, channel, text, intent);
@@ -180,13 +189,18 @@ public class Index {
 
     // ------------------------------------------------------------------ steps
 
-    /** Runs one decision-model call; falls back to keyword matching. */
+    /**
+     * Runs one Clef decision call. Clef is the ONLY classifier: when it is
+     * unreachable, misconfigured or picks an action that doesn't exist, the
+     * result is "unknown" — no keyword fallback.
+     */
     private String decide(String text, List<String> choices, Map<String, Object> actions) {
+        lastConfidence.set("0.0");
         String key = env("DECISION_API_KEY", "");
         String model = env("DECISION_MODEL", "clef-flash");
         String url = env("DECISION_URL", "");
-        if (key.isEmpty()) {
-            return keyword(text, choices); // no model configured: deterministic path
+        if (key.isEmpty() || url.isEmpty()) {
+            return "unknown"; // Clef not configured: nothing to decide with
         }
         try {
             Map<String, Object> criteria = new LinkedHashMap<>();
@@ -209,18 +223,20 @@ public class Index {
             Map<String, Object> answers = asMap(result.get("answers"));
             Map<String, Object> intentAnswer = asMap(answers.get("intent"));
             String choice = str(intentAnswer.get("choice"));
+            lastConfidence.set(str(intentAnswer.get("confidence"))); // Clef's own score
             if (!choice.isEmpty() && actions.containsKey(choice)) {
                 return choice;
             }
         } catch (Exception e) {
-            // model unreachable or unparsable — keywords cover it
+            // Clef unreachable or unparsable: stay unknown
         }
-        return keyword(text, choices);
+        return "unknown";
     }
 
     /** Returns an ISO timestamp when the message asks for a timed reminder. */
-    private String scheduleReminder(String tenant, String sender, String channel, String text, String intent) {
-        Matcher m = Pattern.compile(REMINDER_RE).matcher(text);
+    private String scheduleReminder(String tenant, String sender, String channel,
+                                    String text, String intent) {
+        Matcher m = REMINDER.matcher(text);
         if (!"set_reminder".equals(intent) && !m.find()) {
             return null;
         }
@@ -312,25 +328,46 @@ public class Index {
 
     // ----------------------------------------------------------------- data
 
+    /** Lists rows: the single SDK query wrapper every lookup goes through. */
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> rows(String db, String table, List<String> queries)
+            throws Exception {
+        RowList<Map<String, Object>> result = rowList(sync(cont -> tables().listRows(db, table,
+                queries, null, null, null, mapClass(), cont)));
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Row<Map<String, Object>> r : result.getRows()) {
+            out.add(r.getData());
+        }
+        return out;
+    }
+
+    /** The tenant+user session lookup, shared by load/save/delete. */
+    private List<Map<String, Object>> findSession(String tenant, String sender)
+            throws Exception {
+        List<String> queries = new ArrayList<>();
+        queries.add(Query.Companion.equal("tenant_id", tenant));
+        queries.add(Query.Companion.equal("user_id", sender));
+        queries.add(Query.Companion.limit(1));
+        return rows(PLATFORM_DB, SESSIONS, queries);
+    }
+
     private Map<String, Object> fetchRow(String db, String table, String sender)
             throws Exception {
         if (db.isEmpty() || table.isEmpty()) {
             return null;
         }
-        RowList<Map<String, Object>> rows = rowList(sync(cont -> tables().listRows(db, table,
-                List.of(Query.Companion.equal("phone", sender), Query.Companion.limit(1)),
-                null, null, null, mapClass(), cont)));
-        return rows.getTotal() > 0 ? rows.getRows().get(0).getData() : null;
+        List<Map<String, Object>> found = rows(db, table,
+                List.of(Query.Companion.equal("phone", sender), Query.Companion.limit(1)));
+        return found.isEmpty() ? null : found.get(0);
     }
 
     private Map<String, Object> loadActions() {
         try {
-            RowList<Map<String, Object>> rows = rowList(sync(cont -> tables().listRows(
-                    PLATFORM_DB, ACTIONS, List.of(Query.Companion.limit(100)),
-                    null, null, null, mapClass(), cont)));
+            List<Map<String, Object>> found = rows(PLATFORM_DB, ACTIONS,
+                    List.of(Query.Companion.limit(100)));
             Map<String, Object> map = new LinkedHashMap<>();
-            for (Row<Map<String, Object>> r : rows.getRows()) {
-                map.put(str(r.getData().get("template_key")), r.getData());
+            for (Map<String, Object> row : found) {
+                map.put(str(row.get("template_key")), row);
             }
             return map;
         } catch (Exception e) {
@@ -340,13 +377,8 @@ public class Index {
 
     private Map<String, Object> loadSession(String tenant, String sender) {
         try {
-            RowList<Map<String, Object>> rows = rowList(sync(cont -> tables().listRows(
-                    PLATFORM_DB, SESSIONS,
-                    List.of(Query.Companion.equal("tenant_id", tenant),
-                            Query.Companion.equal("user_id", sender),
-                            Query.Companion.limit(1)),
-                    null, null, null, mapClass(), cont)));
-            return rows.getTotal() > 0 ? rows.getRows().get(0).getData() : null;
+            List<Map<String, Object>> found = findSession(tenant, sender);
+            return found.isEmpty() ? null : found.get(0);
         } catch (Exception e) {
             return null;
         }
@@ -360,15 +392,11 @@ public class Index {
             row.put("user_id", sender);
             row.put("current_step", key);
             row.put("state", GSON.toJson(data));
-            RowList<Map<String, Object>> existing = rowList(sync(cont -> tables().listRows(
-                    PLATFORM_DB, SESSIONS,
-                    List.of(Query.Companion.equal("tenant_id", tenant),
-                            Query.Companion.equal("user_id", sender),
-                            Query.Companion.limit(1)),
-                    null, null, null, mapClass(), cont)));
-            if (existing.getTotal() > 0) {
+            List<Map<String, Object>> existing = findSession(tenant, sender);
+            if (!existing.isEmpty()) {
+                String id = str(existing.get(0).get("$id"));
                 sync(cont -> tables().updateRow(PLATFORM_DB, SESSIONS,
-                        existing.getRows().get(0).getId(), row, null, null, mapClass(), cont));
+                        id, row, null, null, mapClass(), cont));
             } else {
                 sync(cont -> tables().createRow(PLATFORM_DB, SESSIONS,
                         sanitize(tenant + "_" + sender), row, null, null, mapClass(), cont));
@@ -380,15 +408,10 @@ public class Index {
 
     private void deleteSession(String tenant, String sender) {
         try {
-            RowList<Map<String, Object>> existing = rowList(sync(cont -> tables().listRows(
-                    PLATFORM_DB, SESSIONS,
-                    List.of(Query.Companion.equal("tenant_id", tenant),
-                            Query.Companion.equal("user_id", sender),
-                            Query.Companion.limit(1)),
-                    null, null, null, mapClass(), cont)));
-            if (existing.getTotal() > 0) {
-                sync(cont -> tables().deleteRow(PLATFORM_DB, SESSIONS,
-                        existing.getRows().get(0).getId(), cont));
+            List<Map<String, Object>> existing = findSession(tenant, sender);
+            if (!existing.isEmpty()) {
+                String id = str(existing.get(0).get("$id"));
+                sync(cont -> tables().deleteRow(PLATFORM_DB, SESSIONS, id, cont));
             }
         } catch (Exception ignored) {
         }
@@ -398,14 +421,12 @@ public class Index {
     private String template(String db, String tenant, String key, Map<String, Object> slots) {
         String body = "";
         try {
-            RowList<Map<String, Object>> rows = rowList(sync(cont -> tables().listRows(
-                    db, TEMPLATES,
+            List<Map<String, Object>> found = rows(db, TEMPLATES,
                     List.of(Query.Companion.equal("tenant_id", tenant),
                             Query.Companion.equal("template_key", key),
-                            Query.Companion.limit(1)),
-                    null, null, null, mapClass(), cont)));
-            if (rows.getTotal() > 0) {
-                body = str(rows.getRows().get(0).getData().get("body"));
+                            Query.Companion.limit(1)));
+            if (!found.isEmpty()) {
+                body = str(found.get(0).get("body"));
             } else if (!PLATFORM_DB.equals(db)) {
                 return template(PLATFORM_DB, tenant, key, slots); // platform holds the defaults
             } else {
@@ -451,7 +472,7 @@ public class Index {
     private String stashAttachment(Map<String, Object> body) {
         String url = str(firstNonNull(body.get("attachment_url"), body.get("file_url")));
         String bucket = env("POCKET_ATTACHMENT_BUCKET", "");
-        if (url.isEmpty() || !url.startsWith("http") || bucket.isEmpty()) {
+        if (!isFetchableUrl(url) || bucket.isEmpty()) {
             return null;
         }
         try {
@@ -467,6 +488,53 @@ public class Index {
             return str(asMap(file).get("$id"));
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /** Only https URLs on public hosts; blocks redirects to anything else. */
+    private static boolean isFetchableUrl(String url) {
+        if (url == null) {
+            return false;
+        }
+        URI uri;
+        try {
+            uri = URI.create(url);
+        } catch (Exception e) {
+            return false;
+        }
+        if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getHost() == null) {
+            return false;
+        }
+        return !resolvesToPrivateHost(uri.getHost());
+    }
+
+    private static boolean resolvesToPrivateHost(String host) {
+        try {
+            for (InetAddress addr : InetAddress.getAllByName(host)) {
+                if (addr.isAnyLocalAddress() || addr.isLoopbackAddress()
+                        || addr.isLinkLocalAddress() || addr.isSiteLocalAddress()
+                        || addr.isMulticastAddress()) {
+                    return true;
+                }
+                byte[] b = addr.getAddress();
+                int octet0 = b[0] & 0xFF;
+                int octet1 = b[1] & 0xFF;
+                if (octet0 == 100 && (octet1 & 0xC0) == 128) { // 100.64.0.0/10 CGNAT
+                    return true;
+                }
+                if (octet0 == 192 && octet1 == 0 && (b[2] & 0xFF) == 2) { // 192.0.2.0/24 TEST-NET
+                    return true;
+                }
+                if (octet0 == 198 && (octet1 == 18 || octet1 == 19)) { // 198.18.0.0/15 benchmark
+                    return true;
+                }
+                if (b.length == 16 && (b[0] & 0xFF) == 0xfd) { // unique local IPv6 fc00::/7
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return true; // unresolvable host: treat as private (fail closed)
         }
     }
 
@@ -532,6 +600,10 @@ public class Index {
     }
 
     private static Client client() {
+        Client cached = REQ_CLIENT.get();
+        if (cached != null) {
+            return cached;
+        }
         Client c = new Client();
         c.setEndpoint(firstNonBlank(env("APPWRITE_FUNCTION_API_ENDPOINT", ""), "http://localhost/v1"));
         c.setProject(firstNonBlank(
@@ -540,6 +612,7 @@ public class Index {
         c.setKey(firstNonBlank(
                 firstNonBlank(env("POCKET_TENANT_KEY"), reqHeader("x-appwrite-key")),
                 env("APPWRITE_FUNCTION_API_KEY")));
+        REQ_CLIENT.set(c);
         return c;
     }
 
@@ -565,30 +638,6 @@ public class Index {
         } catch (Exception e) {
             return new LinkedHashMap<>();
         }
-    }
-
-    private static String keyword(String text, List<String> choices) {
-        String clean = text.toLowerCase().replaceAll("[^a-z0-9 ]", " ").trim();
-        String best = "unknown";
-        int bestScore = 0;
-        for (String choice : choices) {
-            String key = choice.toLowerCase().replace('_', ' ');
-            int score = 0;
-            for (String word : key.split(" ")) {
-                if (clean.contains(word)) {
-                    score++;
-                }
-            }
-            if (score > bestScore) {
-                bestScore = score;
-                best = choice;
-            }
-        }
-        return best;
-    }
-
-    private static String confidenceOf(String text, List<String> choices, String intent) {
-        return intent.equals("unknown") ? "0.0" : "1.0";
     }
 
     private static String guessChannel(Map<String, Object> body) {

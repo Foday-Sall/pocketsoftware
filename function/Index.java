@@ -159,14 +159,19 @@ public class Index {
             reply = template(PLATFORM_DB, tenant, "unknown", Map.of("text", text));
         } else {
             String db = str(action.get("target_database_id"));
-            Map<String, Object> row = fetchRow(db, str(action.get("target_collection")), sender);
-            if (row == null) {
-                reply = template(db, tenant, intent + "_missing",
-                        Map.of("phone", sender, "name", sender));
+            if ("bot_templates".equals(str(action.get("target_collection")))) {
+                // self-describing intent: template reply only, no caller row needed
+                reply = template(PLATFORM_DB, tenant, intent, Map.of("text", text));
             } else {
-                Map<String, Object> slots = new LinkedHashMap<>(row);
-                slots.put("value", row.get(str(action.get("data_field_to_read"))));
-                reply = template(db, tenant, intent, slots);
+                Map<String, Object> row = fetchRow(db, str(action.get("target_collection")), sender);
+                if (row == null) {
+                    reply = template(db, tenant, intent + "_missing",
+                            Map.of("phone", sender, "name", sender));
+                } else {
+                    Map<String, Object> slots = new LinkedHashMap<>(row);
+                    slots.put("value", row.get(str(action.get("data_field_to_read"))));
+                    reply = template(db, tenant, intent, slots);
+                }
             }
         }
         send(channel, sender, reply);

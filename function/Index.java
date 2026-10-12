@@ -135,7 +135,7 @@ public class Index {
         String confidence = confidenceOf(text, choices, intent);
 
         // ---- reminder request: hand the countdown to the platform queue
-        String scheduled = scheduleReminder(text, intent);
+        String scheduled = scheduleReminder(tenant, sender, channel, text, intent);
         if (scheduled != null) {
             String reply = template(PLATFORM_DB, tenant, "set_reminder", Map.of("time", scheduled));
             send(channel, sender, reply);
@@ -219,7 +219,7 @@ public class Index {
     }
 
     /** Returns an ISO timestamp when the message asks for a timed reminder. */
-    private String scheduleReminder(String text, String intent) {
+    private String scheduleReminder(String tenant, String sender, String channel, String text, String intent) {
         Matcher m = Pattern.compile(REMINDER_RE).matcher(text);
         if (!"set_reminder".equals(intent) && !m.find()) {
             return null;
@@ -240,6 +240,10 @@ public class Index {
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("reminder", true);
             payload.put("message_text", text);
+            // carry the requester so the fired execution can deliver to them
+            payload.put("phone_number", sender);
+            payload.put("channel_type", channel);
+            payload.put("tenant_id", tenant);
             sync(cont -> new Functions(client()).createExecution(functionId,
                     GSON.toJson(payload), true, null, null, null, when, cont));
             return when;

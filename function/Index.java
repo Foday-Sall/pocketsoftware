@@ -64,7 +64,7 @@ public class Index {
     private static final String TEMPLATES = env("POCKET_TEMPLATES_TABLE", "bot_templates");
     private static final String SESSIONS = env("POCKET_SESSIONS_TABLE", "sessions");
     private static final Pattern REMINDER =
-            Pattern.compile("(?i)remind me (?:in|after) (\\d+) (minute|min|hour|hr|day)s?");
+            Pattern.compile("(?i)remind me\\b.*?\\b(?:in|after) (\\d+) (minute|min|hour|hr|day)s?");
 
     /** Captured request headers; carries the injected ephemeral API key. */
     private static final ThreadLocal<Map<String, String>> REQ_HEADERS = new ThreadLocal<>();
@@ -74,6 +74,7 @@ public class Index {
 
     /** One SDK client per request: skips a fresh OkHttp instance per DB call. */
     private static final ThreadLocal<Client> REQ_CLIENT = new ThreadLocal<>();
+
 
     private static String reqHeader(String name) {
         Map<String, String> h = REQ_HEADERS.get();
@@ -101,6 +102,7 @@ public class Index {
 
     private Map<String, Object> handle(RuntimeContext context) throws Exception {
         Map<String, Object> body = readBody(context.getReq().getBody());
+                ? "null" : context.getReq().getBody().getClass().getSimpleName());
 
         // ---- 1. CATCH: normalize sender/text/channel from any payload shape
         String text = str(firstNonNull(body.get("message_text"), body.get("text"),
@@ -190,9 +192,8 @@ public class Index {
     // ------------------------------------------------------------------ steps
 
     /**
-     * Runs one Clef decision call. Clef is the ONLY classifier: when it is
-     * unreachable, misconfigured or picks an action that doesn't exist, the
-     * result is "unknown" — no keyword fallback.
+     * Decision chain: the primary model first, then the fallback router,
+     * then keyword scoring. Confidence reflects the tier that answered.
      */
     private String decide(String text, List<String> choices, Map<String, Object> actions) {
         lastConfidence.set("0.0");
@@ -200,7 +201,11 @@ public class Index {
         String model = env("DECISION_MODEL", "clef-flash");
         String url = env("DECISION_URL", "");
         if (key.isEmpty() || url.isEmpty()) {
-            return "unknown"; // Clef not configured: nothing to decide with
+            lastConfidence.set("0.0");
+            String fb = fallbackRouter(text, choices);
+            if (fb != null) return fb;
+            lastConfidence.set("0.2");
+            return keyword(text, choices);
         }
         try {
             Map<String, Object> criteria = new LinkedHashMap<>();
@@ -228,17 +233,114 @@ public class Index {
                 return choice;
             }
         } catch (Exception e) {
-            // Clef unreachable or unparsable: stay unknown
+            // Clef unreachable or unparsable: fall through to the fallback chain
         }
-        return "unknown";
+        String fb = fallbackRouter(text, choices);
+        if (fb != null) return fb;
+        lastConfidence.set("0.2");
+        return keyword(text, choices);
+    }
+
+    /**
+     * Fallback router (master design): Cloudflare Workers AI tool-calling
+     * classification via the OpenAI-compatible endpoint. Returns null when
+     * unconfigured or unreachable so the caller drops to keyword matching.
+     * Runs only after Clef fails - never replaces a healthy Clef.
+     */
+    private String fallbackRouter(String text, List<String> choices) {
+        String token = env("CF_API_TOKEN", "");
+        String account = env("CF_ACCOUNT_ID", "");
+        if (token.isEmpty() || account.isEmpty()) {
+            return null;
+        }
+        try {
+            List<String> enumChoices = new ArrayList<>(choices);
+            if (!enumChoices.contains("set_reminder")) {
+                enumChoices.add("set_reminder");
+            }
+            if (!enumChoices.contains("unknown")) {
+                enumChoices.add("unknown");
+            }
+            Map<String, Object> intentSchema = new LinkedHashMap<>();
+            intentSchema.put("type", "string");
+            intentSchema.put("enum", enumChoices);
+            Map<String, Object> parameters = new LinkedHashMap<>();
+            parameters.put("type", "object");
+            parameters.put("properties", Map.of("intent", intentSchema));
+            parameters.put("required", List.of("intent"));
+            Map<String, Object> tool = new LinkedHashMap<>();
+            tool.put("type", "function");
+            tool.put("function", Map.of(
+                    "name", "classify_intent",
+                    "description", "Classify the user's message into exactly one action from the enum",
+                    "parameters", parameters));
+            Map<String, Object> payload = new LinkedHashMap<>();
+            payload.put("model", env("CF_DECISION_MODEL", "@cf/meta/llama-3.3-70b-instruct-fp8-fast"));
+            payload.put("messages", List.of(
+                    Map.of("role", "system",
+                            "content", "Classify the user's message into exactly one action. Call the classify_intent tool with your single choice."),
+                    Map.of("role", "user", "content", text)));
+            payload.put("tools", List.of(tool));
+            payload.put("tool_choice", Map.of("type", "function",
+                    "function", Map.of("name", "classify_intent")));
+            payload.put("temperature", 0);
+            payload.put("max_tokens", 200);
+            String res = post("https://api.cloudflare.com/client/v4/accounts/" + account
+                    + "/ai/v1/chat/completions", GSON.toJson(payload), Map.of(
+                    "Authorization", "Bearer " + token,
+                    "Content-Type", "application/json"));
+            Map<String, Object> parsed = GSON.fromJson(res, Map.class);
+            if (!(parsed.get("choices") instanceof List)
+                    || ((List<?>) parsed.get("choices")).isEmpty()) {
+                return null;
+            }
+            Map<String, Object> message = asMap(
+                    asMap(((List<?>) parsed.get("choices")).get(0)).get("message"));
+            if (!(message.get("tool_calls") instanceof List)
+                    || ((List<?>) message.get("tool_calls")).isEmpty()) {
+                return null;
+            }
+            Map<String, Object> fn = asMap(
+                    asMap(((List<?>) message.get("tool_calls")).get(0)).get("function"));
+            Map<String, Object> args = asMap(GSON.fromJson(str(fn.get("arguments")), Map.class));
+            String intent = str(args.get("intent"));
+            if (!intent.isEmpty()) {
+                lastConfidence.set("0.9");
+            }
+            return intent.isEmpty() ? null : intent;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Keyword scoring: the free last-resort classifier (master design degraded tier). */
+    private static String keyword(String text, List<String> choices) {
+        String clean = text.toLowerCase().replaceAll("[^a-z0-9 ]", " ").trim();
+        String best = "unknown";
+        int bestScore = 0;
+        for (String choice : choices) {
+            String key = choice.toLowerCase().replace('_', ' ');
+            int score = 0;
+            for (String word : key.split(" ")) {
+                if (!word.isEmpty() && clean.contains(word)) {
+                    score++;
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                best = choice;
+            }
+        }
+        return best;
     }
 
     /** Returns an ISO timestamp when the message asks for a timed reminder. */
     private String scheduleReminder(String tenant, String sender, String channel,
                                     String text, String intent) {
         Matcher m = REMINDER.matcher(text);
-        if (!"set_reminder".equals(intent) && !m.find()) {
-            return null;
+        boolean found = m.find();
+        if (!found) {
+            return null; // no parseable time: fall through to normal lookup
         }
         long amount = Long.parseLong(m.group(1));
         long seconds = switch (m.group(2).toLowerCase()) {

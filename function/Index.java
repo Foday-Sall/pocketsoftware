@@ -102,7 +102,6 @@ public class Index {
 
     private Map<String, Object> handle(RuntimeContext context) throws Exception {
         Map<String, Object> body = readBody(context.getReq().getBody());
-                ? "null" : context.getReq().getBody().getClass().getSimpleName());
 
         // ---- 1. CATCH: normalize sender/text/channel from any payload shape
         String text = str(firstNonNull(body.get("message_text"), body.get("text"),
